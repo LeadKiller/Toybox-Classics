@@ -115,7 +115,7 @@ end
 function SWEP:FalsifyVars()
 	self.ReloadCheck = false
 	self.dt.Ironsights = false
-	if SERVER then
+	if SERVER and IsValid(self.Owner) then
 		self.Owner:SetFOV(0, 0.25)
 	end
 end
@@ -161,6 +161,7 @@ function SWEP:OnRestore()
 end
 
 function SWEP:Think()
+	if !IsValid(self) or !IsValid(self.Owner) then return end
 	if SERVER and self.NextIdle <= CurTime() then
 		self:SendWeaponAnim(ACT_VM_IDLE)
 		self.NextIdle = CurTime() + self:SequenceDuration()

@@ -29,16 +29,18 @@ function ENT:Think()
 		print("Finished.")
 		self.Swinged = false
 		self.SwingedVoice = false
-		self:StartActivity( ACT_RUN )
+		self:StartActivity(ACT_RUN)
 		self.Speed = 200
 		self.loco:SetDesiredSpeed(200)
 		return
 	end
 	--self:StartActivity( ACT_RUN )
 	if self.Swinged == true and self.SwingTimer == 0 then
+		self.loco:FaceTowards(self:GetNWEntity("enemy"):GetPos())
+		--self:SetAngles(Angle(self:GetAngles().p, self:GetNWEntity("enemy"):GetPos():Angle().yaw, self:GetAngles().r))
 		self.Speed = 0
 		self.loco:SetDesiredSpeed(0)
-		self:StartActivity( ACT_IDLE )
+		self:StartActivity(ACT_IDLE)
 		self:ResetSequenceInfo()
 		self:ResetSequence("swing")
 		self:SetPlaybackRate(3)

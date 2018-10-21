@@ -50,10 +50,6 @@ function ENT:Think()
 	self:FindEnemy()
 	self:AlertAllies()
 	self:ExplosionCheck()
-	if CLIENT and self:Health() < 1 then
-		self.LeftBomb:Remove()
-		self.RightBomb:Remove()
-	end
 
 	if self.SwingTimer ~= 0 and self.SwingTimer < CurTime() then
 		self.SwingTimer = 0
@@ -196,6 +192,8 @@ end
 
 function ENT:Explode(dmginfo)
 	if self.Exploded then return end
+	self.Injured = false
+	self:SetNWBool("injured", false)
 	self.Exploded = true
 	self:StopScreaming()
 	local edata = EffectData()
@@ -239,7 +237,7 @@ function ENT:Explode(dmginfo)
 	--[[if IsValid(self:GetOwner()) and self:GetOwner():GetClass() == "serioussurprise" then
 		self:GetOwner():SetNWFloat("score", self:GetOwner():GetNWFloat("score") + 1)
 	end]]
-	--self:Remove()
+	self:Remove()
 end
 
 function ENT:DoSmoke(bomb) -- This was broke in GMod 12
@@ -264,7 +262,13 @@ end
 function ENT:OnRemove()
 	--self:Explode()
 	self:StopScreaming()
-	if CLIENT then
+	self:RemoveBombs()
+end
+
+function ENT:RemoveBombs()
+	if CLIENT and IsValid(self.LeftBomb) then
+		print("CLIENT")
+		print(self.LeftBomb)
 		self.LeftBomb:Remove()
 		self.RightBomb:Remove()
 	end
@@ -292,8 +296,9 @@ function ENT:ExplosionCheck()
 	local players = player.GetAll()
 	for k, v in pairs(players) do
 		local distance = v:GetPos():Distance(self:GetPos())
-		if distance < 90 and v:Alive() and self.Injured == false then
+		if distance < 90 and v:Alive() and self:GetNWBool("injured") == false then
 			self:Explode(DamageInfo())
+			self:RemoveBombs()
 		end
 	end
 end
@@ -319,26 +324,6 @@ function ENT:Move()
 	end
 	return
 end
-
---[[function ENT:FindEnemy()
-	local players = player.GetAll()
-	local distance = 9999
-	local player = player.GetAll()[1]
-	for k, v in pairs(players) do
-		local distanceplayer = v:GetPos():Distance(self:GetPos())
-		if distance > distanceplayer then
-			distance = distanceplayer
-			player = v
-		end
-	end
-	if player:GetPos():Distance(self:GetPos()) < 600 then
-	--print(player:Nick().." is the closest!")
-		self:SetNWEntity("enemy", player)
-		return player
-	else
-		return
-	end
-end]]
 
 function ENT:FindEnemy()
 	local players = player.GetAll()

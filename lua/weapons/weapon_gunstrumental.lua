@@ -174,6 +174,9 @@ function SWEP:GetSecondaryDelay()
 end
 
 function SWEP:Deploy()
+	if self.Cursor == 1 then
+		self:Reload()
+	end
 	return true
 	
 end
