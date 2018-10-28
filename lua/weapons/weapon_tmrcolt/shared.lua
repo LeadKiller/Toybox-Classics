@@ -181,7 +181,16 @@ function SWEP:Holster()
 	if CLIENT and IsValid(viewmodel2) then -- only tested with bots, might not work on real players?
 		for i=0, viewmodel2:GetBoneCount()-1 do
 			viewmodel2:ManipulateBonePosition(i, Vector(0, 0, 0))
+			viewmodel2:ManipulateBoneScale(i, Vector(1, 1, 1))
+			viewmodel2:ManipulateBoneAngles(i, Angle(0, 0, 0))
 		end
+		for i=0, viewmodel1:GetBoneCount()-1 do
+			viewmodel1:ManipulateBonePosition(i, Vector(0, 0, 0))
+			viewmodel1:ManipulateBoneScale(i, Vector(1, 1, 1))
+			viewmodel1:ManipulateBoneAngles(i, Angle(0, 0, 0))
+		end
+		self:BulletScale(0, true, true, true, true, true, true)
+		self:BulletScale(1, true, true, true, true, true, true)
 	end
 
 	return true
@@ -231,13 +240,22 @@ function SWEP:ViewModelDrawn(vm)
 	viewmodel_left:ManipulateBonePosition(viewmodel_left:LookupBone("Arm"), secondary_position)
 
 
-	if self.Owner:GetActiveWeapon() == self then
-		viewmodel_left:ManipulateBonePosition(viewmodel_left:LookupBone("Bip01_L_UpperArm"), Vector(0, math.huge, 0))
-		viewmodel_right:ManipulateBonePosition(viewmodel_right:LookupBone("Bip01_L_UpperArm"), Vector(0, math.huge, 0))
-	else
-		viewmodel_left:ManipulateBonePosition(viewmodel_left:LookupBone("Bip01_L_UpperArm"), Vector(0, 0, 0))
-		viewmodel_right:ManipulateBonePosition(viewmodel_right:LookupBone("Bip01_L_UpperArm"), Vector(0, 0, 0))
+	--if self.Owner:GetActiveWeapon() == self then
+	for i=0, viewmodel_left:GetBoneCount()-1 do
+		if string.sub(viewmodel_left:GetBoneName(i), 1, 7) == "Bip01_L" then
+			viewmodel_left:ManipulateBoneScale(i, Vector(0, 0, 0))
+			viewmodel_left:ManipulateBonePosition(i, Vector(-3000, -3000, -3000))
+		end
 	end
+	for i=0, viewmodel_right:GetBoneCount()-1 do
+		if string.sub(viewmodel_right:GetBoneName(i), 1, 7) == "Bip01_L" then
+			viewmodel_right:ManipulateBoneScale(i, Vector(0, 0, 0))
+			viewmodel_right:ManipulateBonePosition(i, Vector(-3000, -3000, -3000))
+		end
+	end
+		--viewmodel_left:ManipulateBonePosition(viewmodel_left:LookupBone("Bip01_L_UpperArm"), Vector(0, math.huge, 0))
+		--viewmodel_right:ManipulateBonePosition(viewmodel_right:LookupBone("Bip01_L_UpperArm"), Vector(0, math.huge, 0))
+	--end
 
 	if self:Clip1() ~= -1 and alphap ~= 0 then
 		render.SetMaterial(Material("effects/yellowflare"))
@@ -246,7 +264,7 @@ function SWEP:ViewModelDrawn(vm)
 
 	if self:Clip2() ~= -1 and alphas ~= 0 then
 		render.SetMaterial(Material("effects/yellowflare"))
-		render.DrawSprite(viewmodel_left:GetBonePosition(viewmodel_left:LookupBone("Cylinder")) + Vector(0,2,0), 4, 4, Color(255, 255, 255, alphas))
+		render.DrawSprite(viewmodel_left:GetBonePosition(viewmodel_left:LookupBone("Cylinder")), 4, 4, Color(255, 255, 255, alphas))
 	end
 
 	if self:Clip1() == -1 then
@@ -288,7 +306,6 @@ function SWEP:ViewModelDrawn(vm)
 	elseif self:Clip2() == 0 then
 		self:BulletScale(1, false, false, false, false, false, false)
 	end
-
 end
 
 function SWEP:notahack() -- todo done? maybe... edit: i guess so, but this is less hacky then what you have shouldve seen!
@@ -345,6 +362,8 @@ end
 
 function SWEP:BulletScale(viewmodelselect, bullet1, bullet2, bullet3, bullet4, bullet5, bullet6)
 	local viewmodel = self.Owner:GetViewModel(viewmodelselect)
+
+	if !IsValid(viewmodel) or SERVER or !viewmodel:LookupBone("Bullet1") then return end
 
 	if bullet1 == true then
 		viewmodel:ManipulateBoneScale(viewmodel:LookupBone("Bullet1"), Vector(1, 1, 1))

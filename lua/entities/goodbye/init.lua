@@ -114,7 +114,6 @@ function ENT:Suicide()
 				gun:SetAngles( Angle( 0, 90, 0 ) )
 			gun:Spawn()
 			self.Gun = gun
-			self.Alpha = 255
 		end
 	end )
 end

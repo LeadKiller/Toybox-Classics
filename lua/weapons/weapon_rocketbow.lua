@@ -80,7 +80,6 @@ function SWEP:Initialize()
 end
 
 function SWEP:Holster()
-	
 	if CLIENT and IsValid(self.Owner) then
 		local vm = self.Owner:GetViewModel()
 		if IsValid(vm) then

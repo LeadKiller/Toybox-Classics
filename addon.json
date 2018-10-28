@@ -1,0 +1,11 @@
+{
+	"title"		:	"Toybox Classics",
+	"type"		:	"weapon",
+	"tags"		:	[ "fun", "comic" ],
+	"ignore"	:
+	[
+		"BUGS",
+		"Toybox-Classics.jpg",
+		"*.git*"
+	]
+}
