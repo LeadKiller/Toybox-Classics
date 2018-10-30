@@ -7,6 +7,10 @@ ENT.Spawnable = true
 ENT.Category = "Toybox Classics"
 ENT.RenderGroup = RENDERGROUP_OPAQUE
 
+if CLIENT then
+	language.Add("nitroglycerine", "Nitroglycerine")
+end
+
 if (SERVER) then
 
 function ENT:Initialize()

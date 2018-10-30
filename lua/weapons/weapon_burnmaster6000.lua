@@ -120,9 +120,11 @@ end
 function SWEP:Reload()
 	if !self:CanReload() then return false end
 	self:SetNWBool("Reloading", true)
-	if CLIENT then
+	if CLIENT and not game.SinglePlayer() then
 		self:EmitSound("weapons/ar2/npc_ar2_reload.wav")
 		return
+	else
+		self:EmitSound("weapons/ar2/npc_ar2_reload.wav")
 	end
 	self:SendWeaponAnim(ACT_VM_HOLSTER)
 	self.ReloadTime=CurTime()+2
@@ -184,7 +186,7 @@ function SWEP:PrimaryAttack()
 		if self.Owner:Alive() then
 			local effectdata = EffectData()
 			effectdata:SetOrigin( hitpos )
-			effectdata:SetEntity( self.Weapon )
+			effectdata:SetEntity( self )
 			effectdata:SetStart( PlayerPos )
 			effectdata:SetNormal( PlayerAng )
 			effectdata:SetScale( jetlength )
@@ -360,7 +362,7 @@ function SWEP:SecondaryAttack()
 	if jetlength < 6 then jetlength = 6 end
 
 	local effectdata = EffectData()
-	effectdata:SetEntity( self.Weapon )
+	effectdata:SetEntity( self )
 	effectdata:SetStart( PlayerPos )
 	effectdata:SetNormal( PlayerAng )
 	effectdata:SetScale( jetlength )

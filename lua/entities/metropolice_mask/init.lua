@@ -46,7 +46,7 @@ include( "shared.lua" )
 				ent:AddEntityRelationship(v,D_HT,99)
 			elseif Resistance(c) then
 				ent:AddEntityRelationship(v,D_LI,99)
-				print("resistance")
+				--print("resistance")
 				if ent:GetEnemy() == v then
 					ent:SetEnemy(NULL)
 				end
@@ -92,9 +92,9 @@ include( "shared.lua" )
 			undo.AddEntity(ent)
 			undo.SetPlayer(ply)
 			undo.AddFunction(function(undo)
-				print("1")
+				--print("1")
 				if not undo.Owner.IsCop then return end
-				print("2")
+				--print("2")
 				undo.Owner.IsCop = nil
 				for k,v in ipairs(ents.GetAll()) do
 					CheckRebel(v)

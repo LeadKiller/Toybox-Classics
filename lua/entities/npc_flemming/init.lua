@@ -26,7 +26,7 @@ function ENT:Think()
 	self:Hit()
 	if self.SwingTimer ~= 0 and self.SwingTimer < CurTime() then
 		self.SwingTimer = 0
-		print("Finished.")
+		--print("Finished.")
 		self.Swinged = false
 		self.SwingedVoice = false
 		self:StartActivity(ACT_RUN)

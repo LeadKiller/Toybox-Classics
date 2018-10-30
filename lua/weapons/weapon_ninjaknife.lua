@@ -979,18 +979,27 @@ function SWEP:ThrowKnife()
 			local Time = self:ForceVMAnim("draw")
 			self:SetNextSecondaryFire(CurTime() + Time)
 		else
+			self:SetCloaked(false)
 			self:GetOwner():StripWeapon(self:GetClass())
 		end
 	end
 end
 
 function SWEP:PickedUpKnife()
-	self:SetKnifeCount(self:GetKnifeCount() + 1)
+	if self:GetKnifeCount() == 0 then
+		self:SetKnifeCount(5)
+	else
+		self:SetKnifeCount(self:GetKnifeCount() + 1)
+	end
 	self:SetNextSecondaryFire(CurTime() + self:ForceVMAnim("draw"))
 end
 
+function SWEP:Equip()
+	self:PickedUpKnife()
+end
+
 //////////////
-// CLOAKING //
+// CLOAKING //	
 //////////////
 function SWEP:SetCloaked(inval)
 	if(IsValid(self:GetOwner())) then
@@ -1093,6 +1102,10 @@ function SWEP:Holster()
 	return true
 end
 
+function SWEP:OnRemove()
+	self:Holster()
+end
+
 function SWEP:Deploy()
 	return true
 end
@@ -1110,8 +1123,10 @@ function SWEP:CloakThink()
 	if(!IsValid(VM)) then return end // Just wait a while - itll come back, eventually.
 	if(self:GetCloaked() == true) then
 		VM:SetMaterial("models/props_c17/fisheyelens")
+		self:GetOwner():GetHands():SetMaterial("models/props_c17/fisheyelens")
 	elseif(self:GetCloaked() == false) then
 		VM:SetMaterial("")
+		self:GetOwner():GetHands():SetMaterial("")
 	end
 end
 

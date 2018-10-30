@@ -14,7 +14,9 @@ SWEP.PrintName = "Ninja Knife"
 SWEP.Author = "Emi, LeadKiller"
 
 SWEP.Primary.Ammo = false
+SWEP.Primary.DefaultClip = 5
 SWEP.Secondary.Ammo = false
+SWEP.Secondary.DefaultClip = 5
 
 SWEP.ViewModel = "models/weapons/v_models/v_knife_spy.mdl"
 SWEP.WorldModel = "models/weapons/w_knife_t.mdl"
