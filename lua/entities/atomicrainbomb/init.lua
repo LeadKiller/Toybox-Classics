@@ -100,6 +100,7 @@ function ENT:BeepFX()
 end
 
 function ENT:start()
+	if !IsValid(self) then return end
 	local pos = self:GetPos()
 
 	self.glow1 = ents.Create("env_lightglow")

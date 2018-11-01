@@ -153,6 +153,7 @@ end
 function SWEP:SpawnLaser()
     local ED = EffectData()
     ED:SetEntity(self)
+    print("FUCK YEASH")
     util.Effect("zeroxone_ice_beam_hit", ED)
 end
 /*---------------------------------------------------------
@@ -267,7 +268,7 @@ function SWEP:Initialize()
                     ice:SetEndSize(30)
                     ice:SetEndAlpha(0)
                     ice:SetDieTime(0.375)
-                    ice:SetColor(Color(210,245,255))
+                    ice:SetColor(210,245,255)
                 end
             end
             if self.ent and IsValid(self.ent) and self.ent:GetOwner():GetActiveWeapon()==self.ent then
@@ -284,7 +285,7 @@ function SWEP:Initialize()
                     ice:SetEndSize(0)
                     ice:SetEndAlpha(130)
                     ice:SetDieTime(0.75)
-                    ice:SetColor(Color(210,245,255))
+                    ice:SetColor(210,245,255)
                 end
                 return true
             end
@@ -325,7 +326,7 @@ function SWEP:Initialize()
                 ice:SetEndAlpha(0)
                 ice:SetDieTime(0.75)
                 ice:SetGravity(Vector(0,0,-1000))
-                ice:SetColor(Color(255,255,255))
+                ice:SetColor(255,255,255)
                 ice:SetCollide(true)
             end
             self.em:Finish()
@@ -369,7 +370,7 @@ function SWEP:Initialize()
                 ice:SetEndSize(125)
                 ice:SetEndAlpha(0)
                 ice:SetDieTime(0.75)
-                ice:SetColor(Color(135,230,255))
+                ice:SetColor(135,230,255)
             end
             self.em:Finish()
         end

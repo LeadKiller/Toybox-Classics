@@ -43,7 +43,7 @@ if SERVER then
 		self.Scale = 1
 		self.RemoveDelay = CurTime() + 6
 		
-		//Don't want it going through the ceiling
+		//Dont want it going through the ceiling
 		local pos = self:GetPos()
 		local tracedata = {}
 		tracedata.start = pos
@@ -262,7 +262,7 @@ else //CLIENT
 		local OldPos = self:GetPos()
 		self:SetPos( OldPos + self:GetAngles():Up() * math.sin( RealTime() * 3 ) * .2 ) 
 
-		//Reduce model scale as it get's closer to wormhole
+		//Reduce model scale as it gets closer to wormhole
 		for _, ent in ipairs( ents.GetAll() ) do
 			
 			if IsValid( ent ) && !ent:IsPlayer() && !ent:IsWeapon() && ent:GetClass() != "env_sprite" then
@@ -283,7 +283,7 @@ else //CLIENT
 		if !self.NextParticle || CurTime() > self.NextParticle then
 
 			local pos = self:GetPos()
-			local sprpos = self:GetPos() + ( VectorRand() * ( self:BoundingRadius() * 4 ) )
+			local sprpos = self:GetPos() + ( VectorRand() * ( self.Scale * 100 ) )
 			local angle = sprpos - pos
 			local dist = pos:Distance( sprpos )
 			local vect = angle:GetNormalized() * ( ( dist / 1.25 ) * -1 )
@@ -329,7 +329,7 @@ else //CLIENT
 	
 	function ENT:RemoveEmitter()
 		
-		if !self.Emitter then return end //we don't have an emitter!
+		if !self.Emitter then return end //we dont have an emitter!
 		self.Emitter:Finish()
 		self.Emitter = nil
 
@@ -402,7 +402,7 @@ else //CLIENT
 			particle:SetEndAlpha( 128 )
 			particle.Owner = data:GetEntity()
 		end
-		emitter:Finish()
+		--emitter:Finish()
 		
 		local partmass = math.Clamp( data:GetScale(), 4, 150 )
 		for i=1, partmass do
