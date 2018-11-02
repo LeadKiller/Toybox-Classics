@@ -153,7 +153,6 @@ end
 function SWEP:SpawnLaser()
     local ED = EffectData()
     ED:SetEntity(self)
-    print("FUCK YEASH")
     util.Effect("zeroxone_ice_beam_hit", ED)
 end
 /*---------------------------------------------------------
