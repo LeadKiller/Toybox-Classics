@@ -180,17 +180,20 @@ function SWEP:SecondaryAttack()
     if (!SERVER) then return end
     self.Owner:EmitSound("WeaponDissolve.Charge",SNDLVL_GUNFIRE,100)
     self.Owner:Lock()
-    timer.Simple(3,function() self.Owner:UnLock() hook.Remove("Think",self.Owner:Nick().."ScreenShake") end)
-    hook.Add("Think",self.Owner:Nick().."ScreenShake",function() self.Owner:ViewPunch(Angle(math.Rand(-0.5,0.5),math.Rand(-0.5,0.5),math.Rand(-0.5,0.5))) end)
+    timer.Simple(3,function() if !IsValid(self) then return end self.Owner:UnLock() hook.Remove("Think",self.Owner:Nick().."ScreenShake") end)
+    hook.Add("Think", self.Owner:Nick().."ScreenShake", function() if !IsValid(self.Owner) then return end self.Owner:ViewPunch(Angle(math.Rand(-0.5,0.5),math.Rand(-0.5,0.5),math.Rand(-0.5,0.5))) end)
    
     timer.Simple(1,function()
+    		if !IsValid(self) then return end
             local MaxDist = 1500
             self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
             self.Owner:StopSound("WeaponDissolve.Charge")
             self:EmitSound("explode_7",SNDLVL_GUNFIRE,100)
             local ply = self.Owner
            
-            local tbl = ents.FindInCone(ply:GetShootPos(),ply:GetAimVector(),MaxDist,70)
+            local tbl = ents.FindInCone(ply:EyePos(), ply:GetAimVector(), MaxDist, math.cos(math.rad( 70 ))) -- OH JESUS CHRIST WHY MUST THIS METHOD BE USED IT'S HORRIBLY OUTDATED AND I HAVE NO OTHER
+            PrintTable(tbl)
+            print("TEST")
            
             local data = EffectData()
             local wep = ply:GetViewModel()
@@ -209,6 +212,7 @@ function SWEP:SecondaryAttack()
             util.Effect("railgun_burst",data)
            
             for k,v in ipairs(tbl) do
+            	print(v)
                 if v:IsValid() and v:IsPlayer() then --I'm a lazy mofo
                         v:SendLua("LocalPlayer().BlindingLight = 1 timer.Simple(2,function() LocalPlayer().BlindingLight = nil end)")
                 elseif v:IsValid() and v:Health() > 0 then
