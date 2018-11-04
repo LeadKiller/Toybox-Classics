@@ -192,8 +192,6 @@ function SWEP:SecondaryAttack()
             local ply = self.Owner
            
             local tbl = ents.FindInCone(ply:EyePos(), ply:GetAimVector(), MaxDist, math.cos(math.rad( 70 ))) -- OH JESUS CHRIST WHY MUST THIS METHOD BE USED IT'S HORRIBLY OUTDATED AND I HAVE NO OTHER
-            PrintTable(tbl)
-            print("TEST")
            
             local data = EffectData()
             local wep = ply:GetViewModel()
@@ -212,7 +210,6 @@ function SWEP:SecondaryAttack()
             util.Effect("railgun_burst",data)
            
             for k,v in ipairs(tbl) do
-            	print(v)
                 if v:IsValid() and v:IsPlayer() then --I'm a lazy mofo
                         v:SendLua("LocalPlayer().BlindingLight = 1 timer.Simple(2,function() LocalPlayer().BlindingLight = nil end)")
                 elseif v:IsValid() and v:Health() > 0 then
@@ -226,7 +223,7 @@ function SWEP:SecondaryAttack()
                 end
                 local phys = v:GetPhysicsObject()
                 if v and v:IsValid() and phys and phys:IsValid() then
-                    phys:ApplyForceCenter((self.Owner:GetShootPos()-v:GetPos()):Normalize()*-100000)
+                    phys:ApplyForceCenter((self.Owner:GetShootPos()-v:GetPos()):GetNormalized()*-100000)
                 end
             end
     end)
