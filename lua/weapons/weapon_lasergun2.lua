@@ -3,6 +3,7 @@ AddCSLuaFile()
 SWEP.Category = "Toybox Classics"
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false
+SWEP.UseHands = true
   SWEP.Author             = "victormeriqui"
   SWEP.Purpose             = "do stuff"
   SWEP.Instructions     = "!!!"
@@ -39,7 +40,6 @@ end
         local color = Color(0,0,0,255)
         local spin
         local hit
-        local trashlazy
         
         local tr = self.Owner:GetEyeTraceNoCursor()
     
@@ -47,12 +47,12 @@ end
         hit = tr.Entity:GetClass():sub(5,-1)
         color = Color(0,255,0,255)
         spin  = SysTime()*700
-        trashlazy,isfiring = Material("icon16/star.png")
+        isfiring = Material("icon16/star.png")
         else
         hit = "NONE"
         color = Color(255,0,0,255)    
         spin = 90
-        trashlazy,isfiring = Material("icon16/emoticon_smile.png")
+        isfiring = Material("icon16/emoticon_smile.png")
         end
         
         
@@ -74,7 +74,7 @@ end
         if self.Owner:KeyDown(IN_ATTACK) && self.Weapon:Clip1() >2 then
         color = Color(150,0,255,255)
         spin  = SysTime()*2000
-        trashlazy,isfiring = Material("icon16/exclamation.png")
+        isfiring = Material("icon16/exclamation.png")
         if self.Weapon:Clip1() >2 then
         
       
@@ -137,7 +137,7 @@ end
     
 
 
-surface.SetTexture(isfiring)
+surface.SetMaterial(isfiring)
 surface.SetDrawColor( 255, 255, 255, 255 )
 surface.DrawTexturedRect(-280,20,15,15) 
 
@@ -153,6 +153,15 @@ surface.DrawTexturedRect(-280,20,15,15)
 
     end
 
+
+function SWEP:CustomAmmoDisplay()
+	self.AmmoDisplay = self.AmmoDisplay or {}
+	self.AmmoDisplay.Draw = true
+	self.AmmoDisplay.PrimaryClip = self:Clip1()
+	self.AmmoDisplay.PrimaryAmmo = 0
+	self.AmmoDisplay.SecondaryAmmo = self:Clip2()
+	return self.AmmoDisplay
+end
 
     function SWEP:DrawHUD()
         
@@ -222,6 +231,9 @@ end
    local pos = self.Owner:EyePos() + (self.Owner:GetAimVector() * 32)
    
    proj = MakeLight (self:GetOwner(), 0, 255, 255, 1, 80, 1, 1, { Pos = pos, Angle = ang })
+   proj:SetPos(pos)
+   proj:SetAngles(ang:Angle())
+   print(ang)
 
    
    local trail = util.SpriteTrail(proj, 0, Color(0,0,255,255), false, 5, 1, 0.4, 1/6*0.5, "trails/electric.vmt")
