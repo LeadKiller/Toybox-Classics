@@ -691,9 +691,17 @@ local EFFECT={}
 	local Pos = self:GetTracerShootPos( self.Position, self.WeaponEnt, self.Attachment )
 	
 	local Velocity	 = data:GetNormal()
-	local AddVel = self.WeaponEnt:GetOwner():GetVelocity()*0.85
+	local AddVel
 	local jetlength = data:GetScale()
-	
+
+	if IsValid(self.WeaponEnt) and IsValid(self.WeaponEnt:GetOwner()) then
+		AddVel = self.WeaponEnt:GetOwner():GetVelocity()*0.85
+	elseif IsValid(self.WeaponEnt) then
+		AddVel = self.WeaponEnt:GetVelocity()*0.85
+	else
+		AddVel = Vector(17, -40, -40)
+	end
+
 	local maxparticles1 = math.ceil(jetlength/71) + 1
 	local maxparticles2 = math.ceil(jetlength/190)
 
