@@ -4,7 +4,6 @@ SWEP.Category = "Toybox Classics"
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false
 SWEP.PrintName        = "Boosted Artillery Cannon"     
-SWEP.ClassName      = "BAS"
 SWEP.Slot            = 3                     
 SWEP.SlotPos        = 0                    
 SWEP.DrawAmmo        = false               
@@ -136,8 +135,7 @@ function SWEP:Think()
 end
 
 function SWEP:Reload()                
-    if (self.Weapon:DefaultReload()) then return end    -- 
-    self.Weapon:DefaultReload( ACT_VM_RELOAD )        --
+    self:DefaultReload( ACT_VM_RELOAD )        --
 end
 
 function SWEP:Deploy()                

@@ -762,7 +762,7 @@ end
 function SWEP:BasicStab()
 	local ABC, Time
 	Time, ABC = self:ForceVMAnim("_slashes")
-	timer.Simple(tFallback["Anims"][self:GetViewModelIndex()]["_dmgdelay"], function() self:DoStab(ABC) end)
+	timer.Simple(tFallback["Anims"][self:GetViewModelIndex()]["_dmgdelay"], function() if IsValid(self) then self:DoStab(ABC) end end)
 	
 	self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
 
