@@ -9,7 +9,7 @@ end
 SWEP.PrintName = "Pixel Weapon"
 SWEP.Author = "Thermadyle"
 
-SWEP.ViewModel = ""
+SWEP.ViewModel = "models/weapons/c_arms_animations.mdl"
 SWEP.WorldModel = ""
 
 SWEP.SwingDelay = 0.5
@@ -32,7 +32,7 @@ SWEP.Category = "Toybox Classics"
 
 function SWEP:Initialize()
 
-self:SetWeaponHoldType( "normal" )
+self:SetHoldType( "melee" )
 
 for i = 1, 32 do
 
@@ -42,7 +42,7 @@ end
 
 end
 
-if SERVER then
+
 
 function SWEP:PrimaryAttack()
 
@@ -51,8 +51,12 @@ if ( self.NextAttack or 0 ) < CurTime() then
 self.NextAttack = CurTime() + self.SwingDelay
 self:PlaySound( self.SwingSound )
 
+if SERVER then
 umsg.Start( "pixel_weapon_swing", pl )
 umsg.End()
+end
+
+self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
 local pl = self:GetOwner()
 local tr = pl:GetEyeTraceNoCursor()
@@ -63,8 +67,11 @@ local dist = tr.HitPos:Distance( pl:GetShootPos() )
 if dist <= self.Range then
 
 self:PlaySound( self.HitSound, math.random( 1, 2 ) )
+
+if SERVER then
 ent:TakeDamage( self.Damage, pl )
-   
+end
+
 if ent:IsNPC() then
 
    local blood = EffectData()
@@ -87,6 +94,8 @@ self:EmitSound( str )
 end
 
 function SWEP:SecondaryAttack() end
+
+if SERVER then
 
 function SWEP:Reload()
 
@@ -224,6 +233,64 @@ cam.End3D()
 
 end
 hook.Add( "RenderScreenspaceEffects", "draw_weapon", DrawWeapon )
+
+local function DrawWep( pl )
+
+local wep = pl:GetActiveWeapon()
+
+if not IsValid( wep ) then return end
+if not wep.PixelWeapon then return end
+
+local tr = pl:GetEyeTraceNoCursor()
+local back = 0
+
+if tr and tr.HitPos then
+
+local dist = tr.HitPos:Distance( pl:GetShootPos() )
+back = 32 - math.Clamp( dist, 0, 32 )
+
+end
+
+local swingValue = ( swingRadious * swingRadious ) - swing * swing
+local pos, ang = pl:GetBonePosition(pl:LookupBone("ValveBiped.Bip01_R_Hand"))
+pos = pos + ang:Forward() * 12 - ang:Right() * 5 - ang:Up() * 18
+
+
+--ang:RotateAroundAxis( forward, 90 )
+ang:RotateAroundAxis( ang:Right(), 295 - swingValue - 180 )
+--ang:RotateAroundAxis( ang:Up(), -295 - ( swingValue * 2 ) )
+
+--cam.Start3D( EyePos(), EyeAngles() )
+cam.Start3D2D( pos, ang, 1 )
+
+local lastCol
+for i = 1, 32 do
+
+for j = 1, 16 do
+if not wep.Pixels then continue end
+if not wep.Pixels[i] then continue end
+local col = wep.Pixels[i][j]
+if not col then continue end
+
+if lastCol != col then
+
+surface.SetDrawColor( col )
+lastCol = col
+
+end
+
+surface.DrawRect( -10 + i - 1, j - 1, 1, 1 )
+
+end
+
+end
+
+cam.End3D2D()
+--cam.End3D()
+
+end
+
+hook.Add("PostPlayerDraw", "draw_weapon", DrawWep)
 
 // Menu
 local function Menu( msg )
@@ -363,7 +430,7 @@ propertiesPnl:SetSize( width, 89 )
 propertiesPnl:SetPadding( 5 )
 propertiesPnl:EnableVerticalScrollbar( true )
 propertiesPnl:SetSpacing( 2 )
-
+if game.SinglePlayer() then
 // Damage
 local damage = vgui.Create( "DNumSlider" )
 damage:SetText( "Damage" )
@@ -393,6 +460,8 @@ RunConsoleCommand( "pixel_weapon_swingdelay", val )
 end
 
 propertiesPnl:AddItem( swingrate )
+
+end
 
 local _, y = propertiesPnl:GetPos()
 
@@ -439,8 +508,7 @@ menu:AddOption( "", function() end )
 menu:AddOption( "Load", function()
 
 local data = file.Read( dir .. fileName )
-if not data then return end
-
+if !isstring(data) then return end
 local tabl = glon.decode( data )
 if not tabl then return end
 
@@ -500,9 +568,10 @@ btn:SetText( "Save" )
 btn.DoClick = function()
 
 local data = glon.encode( wep.Pixels )
-if not data then return end
-
+if !isstring(data) then return end
+file.CreateDir( "pixel_weapon" )
 file.Write( "pixel_weapon/" .. entry:GetValue() .. ".txt", data )
+print("Saved "..entry:GetValue().." to data/pixel_weapon/"..entry:GetValue()..".txt!")
 
 RefreshFiles()
 menu:Remove()

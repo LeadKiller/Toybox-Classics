@@ -12,6 +12,8 @@ function ENT:Initialize()
 
 	if (SERVER) then
 		self:PhysicsInit(SOLID_VPHYSICS)
+		self:SetMoveType(MOVETYPE_VPHYSICS)
+		self:SetSolid(SOLID_VPHYSICS)
 	end
 
 	self.Created = CurTime()
@@ -23,7 +25,7 @@ function ENT:Initialize()
 	
 	if SERVER then
 		if !navmesh.GetAllNavAreas()[1] then
-			self:GetOwner():PrintMessage(HUD_PRINTTALK, "There is no navmesh on the map! Create one by doing nav_generate in console!")
+			self:GetNWEntity("owner", self):PrintMessage(HUD_PRINTTALK, "There is no navmesh on the map! Create one by doing nav_generate in console!")
 			local explosion = ents.Create("env_explosion")
 			explosion:SetPos(self:GetPos()+self:OBBCenter())
 			explosion:Spawn()
@@ -36,7 +38,7 @@ end
 function ENT:CheckOwner()
 	if self:GetNWFloat("wave") ~= 0 then return end
 	--if CLIENT then return end
-	local ply = self:GetOwner()
+	local ply = self:GetNWEntity("owner", self)
 	if !IsValid(ply) then return end
 	local tracefull = util.TraceLine({start = ply:EyePos(), endpos = self:GetPos(), filter = {ply}, ignoreworld = false})
 	if tracefull.HitWorld then
@@ -76,7 +78,7 @@ function ENT:SpawnFunction( ply, tr )
 	ply:SelectWeapon("weapon_tmrcolt")
 	local ent = ents.Create(ClassName)
 	ent:SetPos(SpawnPos)
-	ent:SetOwner(ply)
+	ent:SetNWEntity("owner", ply)
 	ent:Spawn()
 	ent:Activate()
 	ent:GetPhysicsObject():Wake()
@@ -106,7 +108,7 @@ function ENT:OnRemove()
 			v:PrintMessage(HUD_PRINTCENTER, "Your score: "..self:GetNWFloat("score"))
 		end
 		for k, v in pairs(ents.FindByClass("npc_kamikaze")) do
-			if v:GetOwner() == self then
+			if v:GetNWEntity("owner", self) == self then
 				v:Remove()
 			end
 		end

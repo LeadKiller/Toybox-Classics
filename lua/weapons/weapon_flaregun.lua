@@ -122,6 +122,16 @@ function SWEP:fireFlare()
     // Shoot 9 bullets, 150 damage, 0.75 aimcone
     //self:ShootBullet( 9999, 1, 0.01 )
 
+    // Remove 1 bullet from our clip
+    self:TakePrimaryAmmo( 1 )
+    
+    // Punch the players view
+    self.Owner:ViewPunch( Angle( -1, 0, 0 ) )
+
+    self.Owner:MuzzleFlash()
+
+    if CLIENT then return end
+
     local e = ents.Create("env_flare");
     e:SetKeyValue("scale", "10");
     e:SetKeyValue("duration", "2");
@@ -133,14 +143,6 @@ function SWEP:fireFlare()
     e:Activate();
     e:Fire( "launch", "2000", 0 );
     timer.Create(self.Owner:UniqueID()..e:EntIndex(), 0.01, 200, function() if IsValid(e) then FLARE:flareBurn(e, self.Owner:UniqueID()..e:EntIndex()) end end);
-    
-    // Remove 1 bullet from our clip
-    self:TakePrimaryAmmo( 1 )
-    
-    // Punch the players view
-    self.Owner:ViewPunch( Angle( -1, 0, 0 ) )
-
-    self.Owner:MuzzleFlash()
 end
 
 function SWEP:SecondaryAttack()

@@ -180,8 +180,9 @@ function SWEP:SecondaryAttack()
 	local ang = self.Owner:GetAimVector()
 	local shooteffect = EffectData()
 	shooteffect:SetOrigin(pos + (ang * 40))
-	util.Effect("electrocannon_shoot", shooteffect)
+	--util.Effect("electrocannon_shoot", shooteffect)
 
+	-- too annoying, sorry
 	if SERVER then
 		local ent = ents.Create("electromissile")
 		if not IsValid(ent) then return end

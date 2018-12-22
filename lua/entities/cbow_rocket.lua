@@ -3,8 +3,10 @@ AddCSLuaFile()
 ENT.Base = "base_anim"
 ENT.Type = "anim"
 
+game.AddParticles("particles/grenade_fx.PCF")
+PrecacheParticleSystem("grenade_explosion_01")
+
 function ENT:Initialize()
-	PrecacheParticleSystem("grenade_explosion_01")
 	self.Sound=CreateSound(self,"Missile.Accelerate")
 	self.Sound:Play()
 	if(SERVER)then

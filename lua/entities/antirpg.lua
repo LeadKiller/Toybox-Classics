@@ -89,7 +89,7 @@ function ENT:Tick()
                 local eff = EffectData()
                 eff:SetScale(0.5) -- Duration
                 eff:SetMagnitude(self.AimProp:EntIndex()) --Our entity
-                eff:SetRadius(self.Target:EntIndex())
+                eff:SetEntity(self.Target)
                 eff:SetOrigin(Vector(0,0,10)) --Offset
                 util.Effect("LaserKillRPG",eff)
                 break --Only one RPG per think
@@ -141,7 +141,7 @@ function EFFECT:Init(data)
     self.Time = CurTime() + data:GetScale()
     
     self.Anti = Entity(data:GetMagnitude())
-    self.RPG = Entity(data:GetRadius())
+    self.RPG = data:GetEntity()
     self.Offset = data:GetOrigin()
 end
 

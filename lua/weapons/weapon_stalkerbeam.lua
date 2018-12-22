@@ -156,7 +156,7 @@ end
 
 function SWEP:Initialize()
 	self.AttackTime=CurTime();
-	self:SetWeaponHoldType("normal")
+	self:SetHoldType("normal")
 	self:InstallDataTable()
 	self:DTVar( "Bool",0, "attacking" );
 	self:DTVar( "Int", 0, "power" );

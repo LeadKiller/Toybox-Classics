@@ -91,7 +91,7 @@ SWEP.IronSightsPos = Vector(-6.98, -15.247, 1.619)
 SWEP.IronSightsAng = Vector(0, 0, 0)
 
 function SWEP:Initialize()
-	self:SetWeaponHoldType("rpg")
+	self:SetHoldType("rpg")
 	self:InstallDataTable()
 	self:DTVar( "Int", 0, "Phase" )
 	self.Weapon:SetNetworkedBool( "Ironsights", false )
@@ -248,7 +248,6 @@ function SWEP:PrimaryAttack()
 	self.Weapon:SetNextSecondaryFire(CurTime() + 1.35 + self.Cannon.Delay)
 	self.Weapon:SetNextPrimaryFire(CurTime() + 1.35 + self.Cannon.Delay)
 	self:DoWarmup()
-	self.Owner:EmitSound(self.Cannon.ChargeSound, 85)
 	
 	local fx = EffectData()
 	fx:SetEntity(self.Owner)
@@ -258,6 +257,7 @@ function SWEP:PrimaryAttack()
 	self.Charging = true
 	
 	if CLIENT then return end
+	self.Owner:EmitSound(self.Cannon.ChargeSound, 85)
 	timer.Simple(1.35, function()
 		if IsValid(self) then
 			self:ShootCannon()

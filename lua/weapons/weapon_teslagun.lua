@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+game.AddParticles("particles/electrical_fx.pcf")
+PrecacheParticleSystem("electrical_arc_01")
 
 SWEP.Spawnable            = true
 SWEP.AdminSpawnable        = false
@@ -23,22 +25,28 @@ SWEP.Primary.DefaultClip    = 80
 SWEP.Primary.Automatic        = true
 SWEP.Primary.Delay        = 0.1
 SWEP.Primary.Ammo        = "none"
+SWEP.Secondary.Automatic = false
+
+function SWEP:SetupDataTables()
+	self:NetworkVar("String", 0, "mode")
+end
 
 function SWEP:Initialize()
 self.v = 0 
 self.charging = 0
 self.ChoseTarget =  false
-self.mode = "normal"
+self:Setmode("normal")
 self:SetHoldType("ar2")
 end
 
 function SWEP:SecondaryAttack()
 self.Owner:EmitSound("weapons/ar2/ar2_reload_push.wav")
-if self.mode == "autoaim" then
-self.mode = "normal"
+if !IsFirstTimePredicted() then return end
+if self:Getmode() == "autoaim" then
+self:Setmode("normal")
 self.Owner:PrintMessage(HUD_PRINTTALK,"Switched to Normal")
 else
-self.mode = "autoaim"
+self:Setmode("autoaim")
 self.Owner:PrintMessage(HUD_PRINTTALK,"Switched to AutoAim")
 end
 end
@@ -59,7 +67,7 @@ if self.v > 5 then
 self.v = 0
 self.charging = 0
 Snd:Stop()
-if self.mode == "autoaim" then
+if self:Getmode() == "autoaim" then
 self:AutoAimShot()
 else
 self:NormalShot()

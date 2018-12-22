@@ -42,7 +42,7 @@ SWEP.SwingHit = {
 }
 
 function SWEP:Initialize()
-    self:SetWeaponHoldType("fist")
+    self:SetHoldType("fist")
 end
 
 /*---------------------------------------------------------
@@ -62,7 +62,7 @@ end
     PrimaryAttack
 ---------------------------------------------------------*/
 function SWEP:PrimaryAttack()
-    if (!SERVER) then return end
+    --if (!SERVER) then return end
     
     self.Owner:DoAttackEvent()
     

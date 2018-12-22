@@ -41,9 +41,7 @@ SWEP.Primary.Ammo                = "pistol"
 SWEP.Secondary.Ammo = false
 
 function SWEP:Initialize()
-    if ( SERVER ) then
-        self:SetWeaponHoldType( self.HoldType )
-    end
+    self:SetHoldType("pistol")
 end
 
 function SWEP:PrimaryAttack()

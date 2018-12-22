@@ -389,7 +389,7 @@ hook.Add("EntityTakeDamage","BreakIce",function(ent, dmg)
 		local inflictor = dmg:GetInflictor()
 		local attacker = dmg:GetAttacker()
 		local amount = dmg:GetDamage()
-        if !(ent.Breakhp==nil) then
+        if ent.Breakhp then
             if dmg:GetDamageType()<2 then
                 amount=amount*0.06
                 if IsValid(attacker) then
@@ -405,4 +405,4 @@ hook.Add("EntityTakeDamage","BreakIce",function(ent, dmg)
             end
         	end
         end
-    end)
+end)

@@ -547,9 +547,7 @@ end
 local Chain = CreateConVar("nk_chainstabs","0",FCVAR_ARCHIVE)
 
 function SWEP:Initialize(bRe)
-	if(self.SetWeaponHoldType) then
-		self:SetWeaponHoldType(self.AnimPrefix)
-	end
+	self:SetHoldType(self.AnimPrefix)
 	
 	__NinjaKnife_Classname = self:GetClass() // Since SWEP.ClassName doesnt exist until a bit later...
 
@@ -587,7 +585,7 @@ local function pickrandom(...)
 end
 
 function SWEP:ForceVMAnim(name)
-	if(self:GetOwner():GetActiveWeapon() != self) then return 0 end
+	if(self.Owner:GetActiveWeapon() != self) then return 0 end
 
 	local SeqTrans = tFallback["Anims"][self:GetViewModelIndex() or 0][name]
 	local AddRet = nil
@@ -597,7 +595,7 @@ function SWEP:ForceVMAnim(name)
 		SeqTrans = SeqTrans[AddRet]
 	end
 	
-	local VM = self:GetOwner():GetViewModel()
+	local VM = self.Owner:GetViewModel()
 	if(!IsValid(VM)) then
 		ErrorNoHalt("Nonexistant viewmodel in ForceVMAnim!\n")
 		self:SetNextAnimTime(CurTime() + 0.5)
@@ -605,7 +603,7 @@ function SWEP:ForceVMAnim(name)
 	end
 	
 	VM:SetPlaybackRate(1.0)
-	VM:ResetSequence(VM:LookupSequence(SeqTrans))
+	VM:ResetSequence(VM:LookupSequence(SeqTrans) or "draw")
 	VM:SetCycle(0)
 	self:SetNextAnimTime(CurTime() + VM:SequenceDuration() - 0.05)
 	return VM:SequenceDuration(), AddRet
@@ -632,7 +630,7 @@ function SWEP:Think()
 
 	self:NextThink(CurTime() + KNIFE_THINK_INTERVAL) // I only override this for a constant interval between thinks.
 
-	local O = self:GetOwner()
+	local O = self.Owner
 	local VZ = O:GetVelocity().z
 
 	if(VZ > KNIFE_ANTIFALL_MINVEL) then
@@ -664,10 +662,10 @@ end
 
 function SWEP:Holster()
 	self:SetCloaked(false)
-	self:GetOwner():SetMaterial("")
-	self:GetOwner():GetHands():SetMaterial("")
-	self:GetOwner():DrawWorldModel(true)
-	self:GetOwner():SetNoTarget(false)
+	self.Owner:SetMaterial("")
+	self.Owner:GetHands():SetMaterial("")
+	self.Owner:DrawWorldModel(true)
+	self.Owner:SetNoTarget(false)
 	self:SetNextAnimTime(CurTime())
 	if(IsValid(self.Owner:GetViewModel())) then self.Owner:GetViewModel():SetSkin(0) end
 
@@ -683,7 +681,7 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
-	if(self:GetOwner():KeyDown(IN_USE)) then
+	if(self.Owner:KeyDown(IN_USE)) then
 		self:ThrowKnife()
 	else
 		self:ToggleCloak()
@@ -692,7 +690,7 @@ end
 
 AccessorFunc(SWEP, "m_fNextReload", "NextReload", FORCE_NUMBER)
 function SWEP:Reload()
-	if(self:GetNextReload() <= CurTime() && self:GetOwner():KeyDown(IN_USE)) then
+	if(self:GetNextReload() <= CurTime() && self.Owner:KeyDown(IN_USE)) then
 		if(!AllowTF2 && !AllowCSS) then return end
 	
 		local CurIndex = self:GetViewModelIndex()
@@ -701,11 +699,11 @@ function SWEP:Reload()
 		if(AllowTF2 && CurIndex == 2) then
 			if(AllowCSS) then
 				NewIndex = 1
-			elseif(!AllowCSS && self:GetOwner():KeyDown(IN_SPEED)) then
+			elseif(!AllowCSS && self.Owner:KeyDown(IN_SPEED)) then
 				NewIndex = 0
 			end
 		elseif(AllowCSS && CurIndex == 1) then
-			if(self:GetOwner():KeyDown(IN_SPEED)) then
+			if(self.Owner:KeyDown(IN_SPEED)) then
 				NewIndex = 0
 			elseif(AllowTF2) then
 				NewIndex = 2
@@ -726,7 +724,7 @@ function SWEP:Reload()
 			self:SetViewModelIndex(NewIndex)
 			SaveViewModelIndex(NewIndex)
 			self:Initialize(true)
-			self:GetOwner():GetViewModel():SetModel(Model(self.ViewModel))
+			self.Owner:GetViewModel():SetModel(Model(self.ViewModel))
 		end
 		self:SetNextReload(CurTime() + 1)
 	end
@@ -764,14 +762,14 @@ function SWEP:BasicStab()
 	Time, ABC = self:ForceVMAnim("_slashes")
 	timer.Simple(tFallback["Anims"][self:GetViewModelIndex()]["_dmgdelay"], function() if IsValid(self) then self:DoStab(ABC) end end)
 	
-	self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
+	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 
 	self:SetNextPrimaryFire(CurTime() + Time)
 end
 
 local KNIFE_BASIC_RANGE = 64
 function SWEP:DoStab(ABC)
-	local P = self:GetOwner()
+	local P = self.Owner
 
 	local Trace = {
 		start = P:GetShootPos(),
@@ -786,7 +784,7 @@ function SWEP:DoStab(ABC)
 
 	local DI = DamageInfo()
 	DI:SetInflictor(self)
-	DI:SetAttacker(self:GetOwner())
+	DI:SetAttacker(self.Owner)
 	DI:SetDamage(10)
 	DI:SetDamageForce(tr.Normal * 1024)
 	DI:SetDamagePosition(tr.HitPos)
@@ -797,7 +795,7 @@ function SWEP:DoStab(ABC)
 
 			self:EmitSound(self.sndKnifeHit)
 
-			if(Ent:IsNPC() || (Ent:IsPlayer() && GAMEMODE:PlayerShouldTakeDamage(Ent,self:GetOwner(),self))) then
+			if(Ent:IsNPC() || (Ent:IsPlayer() && GAMEMODE:PlayerShouldTakeDamage(Ent,self.Owner,self))) then
 				DI:SetDamage(20)
 				Ent:TakeDamageInfo(DI) // I really should whip up a DamageInfo to use on this.
 			end
@@ -849,7 +847,7 @@ local KNIFE_DASHSTAB_RANGE_CHAIN = 512
 local KNIFE_DASHSTAB_FOV = 30
 local KNIFE_DASHSTAB_FOV_SPY = 60
 function SWEP:TryFindDSTarget()
-	local P = self:GetOwner()
+	local P = self.Owner
 	local Range = KNIFE_DASHSTAB_RANGE
 	local FOV = KNIFE_DASHSTAB_FOV
 	if(Chain:GetBool() == true) then Range = KNIFE_DASHSTAB_RANGE_CHAIN end
@@ -896,7 +894,7 @@ function SWEP:TryFindDSTarget()
 end
 
 function SWEP:DashStab()
-	local P = self:GetOwner()
+	local P = self.Owner
 	local E = self:GetDashStabTarget()
 	local EnemyForward = E:GetForward()
 	if(E:IsPlayer()) then
@@ -912,9 +910,9 @@ function SWEP:DashStab()
 	end
 
 	local Time = self:ForceVMAnim("backstab")
-	self:GetOwner():SetAnimation( PLAYER_ATTACK1 )
+	self.Owner:SetAnimation( PLAYER_ATTACK1 )
 	
-	self:GetOwner():EmitSound(self.sndKnifeStab)
+	self.Owner:EmitSound(self.sndKnifeStab)
 	self:SetIdleAnimation("idle")
 
 	self:EmitBlood(E, E:LocalToWorld(E:OBBCenter()) + Vector(0,0,16), (EnemyForward * -0.5 + Vector(0,0,0.65)):GetNormalized(), 4, 8)
@@ -948,9 +946,9 @@ local KNIFE_THROW_SPEED = 1024
 function SWEP:ThrowKnife()
 	local Ent = ents.Create("prop_physics")
 	if(IsValid(Ent)) then
-		Ent:SetOwner(self:GetOwner())
-		Ent:SetPos(self:GetOwner():GetShootPos())
-		Ent:SetAngles(self:GetOwner():GetAimVector():Angle())
+		Ent:SetOwner(self.Owner)
+		Ent:SetPos(self.Owner:GetShootPos())
+		Ent:SetAngles(self.Owner:GetAimVector():Angle())
 		Ent:SetModel(self.WorldModel)
 		
 		if(!AllowCSS) then // No CSS. Dont want missing textures. :|
@@ -963,7 +961,7 @@ function SWEP:ThrowKnife()
 		Ent:SetNotSolid(true)
 		Ent:SetMoveType(MOVETYPE_FLYGRAVITY)
 		Ent:SetGravity(0.3)
-		Ent:SetVelocity((self:GetOwner():GetAimVector():Angle() + Angle(-2.5,0,0)):Forward() * KNIFE_THROW_SPEED)
+		Ent:SetVelocity((self.Owner:GetAimVector():Angle() + Angle(-2.5,0,0)):Forward() * KNIFE_THROW_SPEED)
 		Ent:Fire("Kill","",60) // Limit the lifespan of these knives regardless of what they hit.
 		Ent.EmitBlood = self.EmitBlood
 		Ent.EntsInCone = self.EntsInCone
@@ -980,7 +978,7 @@ function SWEP:ThrowKnife()
 			self:SetNextSecondaryFire(CurTime() + Time)
 		else
 			self:SetCloaked(false)
-			self:GetOwner():StripWeapon(self:GetClass())
+			self.Owner:StripWeapon(self:GetClass())
 		end
 	end
 end
@@ -1002,18 +1000,18 @@ end
 // CLOAKING //	
 //////////////
 function SWEP:SetCloaked(inval)
-	if(IsValid(self:GetOwner())) then
+	if(IsValid(self.Owner)) then
 		if(util.tobool(inval) == true) then
-			self:GetOwner():SetMaterial("effects/strider_bulge_dudv") // "sas/camo/refract") // Cloudscript, so I cant use my own materials. :(
-			self:GetOwner():GetHands():SetMaterial("effects/strider_bulge_dudv")
-			self:GetOwner():DrawWorldModel(false)
-			self:GetOwner():SetNoTarget(true)
+			self.Owner:SetMaterial("effects/strider_bulge_dudv") // "sas/camo/refract") // Cloudscript, so I cant use my own materials. :(
+			self.Owner:GetHands():SetMaterial("effects/strider_bulge_dudv")
+			self.Owner:DrawWorldModel(false)
+			self.Owner:SetNoTarget(true)
 			self:HideFromNPCs()
 		elseif(util.tobool(inval) == false) then
-			self:GetOwner():SetMaterial("")
-			self:GetOwner():GetHands():SetMaterial("")
-			self:GetOwner():DrawWorldModel(true)
-			self:GetOwner():SetNoTarget(false)
+			self.Owner:SetMaterial("")
+			self.Owner:GetHands():SetMaterial("")
+			self.Owner:DrawWorldModel(true)
+			self.Owner:SetNoTarget(false)
 			self:AlertNPCs()
 			self:SetNetworkedBool("m_bCloaked",false)
 		else
@@ -1032,19 +1030,19 @@ end
 
 function SWEP:HideFromNPCs()
 	for i,NPC in pairs(ents.GetAll()) do
-		if(NPC:IsNPC() && NPC:GetEnemy() == self:GetOwner()) then
-			NPC:MarkEnemyAsEluded(self:GetOwner())
+		if(NPC:IsNPC() && NPC:GetEnemy() == self.Owner) then
+			NPC:MarkEnemyAsEluded(self.Owner)
 		end
 	end
 end
 
 local KNIFE_ALERT_RADIUS = 1024
 function SWEP:AlertNPCs()
-	for i,NPC in pairs(ents.FindInSphere(self:GetOwner():GetPos(), KNIFE_ALERT_RADIUS)) do
-		if(NPC:IsNPC() && (NPC:Disposition(self:GetOwner()) == D_HT || NPC:Disposition(self:GetOwner()) == D_FR)) then
+	for i,NPC in pairs(ents.FindInSphere(self.Owner:GetPos(), KNIFE_ALERT_RADIUS)) do
+		if(NPC:IsNPC() && (NPC:Disposition(self.Owner) == D_HT || NPC:Disposition(self.Owner) == D_FR)) then
 			if(!IsValid(NPC:GetEnemy())) then // I dunno - should I allow distractions?
-				NPC:SetEnemy(self:GetOwner())
-				NPC:UpdateEnemyMemory(self:GetOwner(), self:GetOwner():GetPos())
+				NPC:SetEnemy(self.Owner)
+				NPC:UpdateEnemyMemory(self.Owner, self.Owner:GetPos())
 			end			
 		end
 	end
@@ -1069,9 +1067,7 @@ end
 elseif(CLIENT) then
 
 function SWEP:Initialize()
-	if(self.SetWeaponHoldType) then
-		self:SetWeaponHoldType(tFallback["AnimPrefix"][self:GetViewModelIndex()])
-	end
+	self:SetHoldType(tFallback["AnimPrefix"][self:GetViewModelIndex()])
 
 	self.ViewModel = tFallback["ViewModel"][self:GetViewModelIndex()]
 end
@@ -1118,15 +1114,15 @@ end
 // TODO: Unnecessary calls to SetMaterial! Fixme!
 // Maybe I should hook a proxy to m_bCloaked?
 function SWEP:CloakThink()
-	if(!IsValid(self:GetOwner())) then return end
-	local VM = self:GetOwner():GetViewModel()
+	if(!IsValid(self.Owner)) then return end
+	local VM = self.Owner:GetViewModel()
 	if(!IsValid(VM)) then return end // Just wait a while - itll come back, eventually.
 	if(self:GetCloaked() == true) then
 		VM:SetMaterial("models/props_c17/fisheyelens")
-		self:GetOwner():GetHands():SetMaterial("models/props_c17/fisheyelens")
+		self.Owner:GetHands():SetMaterial("models/props_c17/fisheyelens")
 	elseif(self:GetCloaked() == false) then
 		VM:SetMaterial("")
-		self:GetOwner():GetHands():SetMaterial("")
+		self.Owner:GetHands():SetMaterial("")
 	end
 end
 
@@ -1146,7 +1142,7 @@ function SWEP:Reload()
 end
 
 function SWEP:CL_DashStab()
-	local P = self:GetOwner()
+	local P = self.Owner
 	local E = self:GetDashStabTarget()
 
 	self:SetDashStabTarget(NULL)
@@ -1156,8 +1152,8 @@ function SWEP:CL_DashStab()
 end
 
 function SWEP:OnRemove()
-	if(!IsValid(self:GetOwner())) then return end
-	local VM = self:GetOwner():GetViewModel()
+	if(!IsValid(self.Owner)) then return end
+	local VM = self.Owner:GetViewModel()
 	if(!IsValid(VM)) then return end // Just wait a while - itll come back, eventually.	
 	VM:SetMaterial("")
 end

@@ -1,3 +1,5 @@
+AddCSLuaFile()
+
 -- GLON: Garry's Mod Lua Object Notation
 -- A extension of LON: Lua Object Notation
 -- Made entirely by Deco Da Man

@@ -203,7 +203,9 @@ end
         
         if self.Weapon:Clip1() >2 then
         dmginfo:SetAttacker(me)
-        tr.Entity:TakeDamageInfo(dmginfo)
+        if SERVER then
+       		tr.Entity:TakeDamageInfo(dmginfo)
+       	end
         self.Weapon:SendWeaponAnim( ACT_VM_PRIMARYATTACK )
         self:EmitSound("ambient/energy/ion_cannon_shot3.wav")    
         

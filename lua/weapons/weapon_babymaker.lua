@@ -17,7 +17,7 @@ SWEP.WorldModel		= "models/weapons/w_smg1.mdl"
 SWEP.UseHands = true 
 
 -- Settings
-SWEP.HoldType			= "smg1"
+SWEP.HoldType			= "smg"
 SWEP.Weight				= 5			-- 
 SWEP.AutoSwitchTo		= true		-- 
 SWEP.AutoSwitchFrom		= false		-- 
@@ -54,7 +54,7 @@ SWEP.Primary.ClipSize		= 100		--
 SWEP.Primary.DefaultClip	= 500		-- 
 SWEP.Primary.Tracer			= 0			-- 
 SWEP.Primary.Force			= 100			-- 
-SWEP.Primary.TakeAmmoPerBullet = true	-- 
+SWEP.Primary.TakeAmmoPerBullet = 1	-- 
 SWEP.Primary.Automatic		= true		-- 
 SWEP.Primary.Ammo			= "smg1"	--			 --
 
@@ -69,6 +69,8 @@ function SWEP:Initialize()
  
 	// other initialize code goes here
  
+	self:SetHoldType(self.HoldType)
+
 	if CLIENT then
 	
 		// Create a new table for every weapon instance
@@ -515,7 +517,7 @@ function SWEP:ShootBullet( damage, num_bullets, aimcone )
 	bullet.Damage	= damage
 	bullet.AmmoType = "Pistol"
 	bullet.Callback = function(attacker, tr, dmginfo)
-		if IsValid(tr.Entity) and tr.Entity:GetModel() ~= "models/props_c17/doll01.mdl" then
+		if SERVER and IsValid(tr.Entity) and tr.Entity:GetModel() ~= "models/props_c17/doll01.mdl" and isstring(tr.Entity:GetModel()) then
 			local ent = tr.Entity
 			local baby = ents.Create("prop_physics")
 			local velocity = ent:GetVelocity()
@@ -546,11 +548,9 @@ function SWEP:PrimaryAttack()		--
 	self.Owner:SetAnimation( PLAYER_ATTACK1 )			-- 
 	self.Weapon:EmitSound(Sound(self.Primary.Sound))	-- 
 	self.Owner:ViewPunch(Angle( -self.Primary.Recoil, 0, 0 ))
-	if ( SERVER ) then
-		self:ShootBullet(0,1,0)
-		self:TakePrimaryAmmo(1)
-		self:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
-	end	 
+	self:ShootBullet(0,1,0)
+	self:TakePrimaryAmmo(1)
+	self:SetNextPrimaryFire( CurTime() + self.Primary.Delay )
 end
 function SWEP:SecondaryAttack()
 end

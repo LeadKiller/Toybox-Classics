@@ -95,20 +95,25 @@ function SWEP:PrimaryAttack()
    
     self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
     self.Owner:ViewPunch(RecoilAng)
-    if (!SERVER) then return end
-   
-    self.Owner:EmitSound("PropJeep.FireChargedCannon",SNDLVL_20dB,100)
    
     local ply = self.Owner
+
+    if CLIENT and IsFirstTimePredicted() then
    
     local data = EffectData()
     local wep = ply:GetViewModel()
     local pos = Vector()
-    if wep and wep:IsValid() then
-        pos = wep:GetAttachment(1).Pos
-        ang = wep:GetAttachment(1).Ang 
+    if wep and wep:IsValid() and game.SinglePlayer() then
+        pos = wep:GetAttachment(3).Pos
+        ang = wep:GetAttachment(3).Ang 
         local vect = ply:OBBMaxs()
         pos=pos+Vector(0,0,vect.z-7)
+    elseif wep and wep:IsValid() and !game.SinglePlayer() then
+    	PrintTable(wep:GetAttachments())
+        pos = wep:GetAttachment(2).Pos
+        ang = wep:GetAttachment(2).Ang 
+        local vect = ply:OBBMaxs()
+        pos=pos + ply:GetUp() * 5
     end
     local ang = ply:GetAimVector():Angle()
 
@@ -116,6 +121,12 @@ function SWEP:PrimaryAttack()
     data:SetOrigin(pos)
     data:SetAngles(ang)
     util.Effect("railgun_shot",data)
+
+	end
+
+    if (!SERVER) then return end
+
+    self.Owner:EmitSound("PropJeep.FireChargedCannon",SNDLVL_20dB,100)
    
     local pos = ply:GetShootPos()
     local ang = ply:GetAimVector()
@@ -171,8 +182,10 @@ local function SupahFireScreenWhiteness()
 end
 hook.Add( "RenderScreenspaceEffects", "SupahFireScreenWhiteness", SupahFireScreenWhiteness )
 
+
+
 hook.Add("DoPlayerDeath", "dontlockmerailgunpls", function(ply)
-	if ply:GetActiveWeapon():GetClass() == "weapon_rapidrail" then
+	if IsValid(ply) and IsValid(ply:GetActiveWeapon()) and ply:GetActiveWeapon():GetClass() == "weapon_rapidrail" then
 		ply:UnLock()
 		ply:StopSound("WeaponDissolve.Charge")
 		hook.Remove("Think", ply:Nick().."ScreenShake")
