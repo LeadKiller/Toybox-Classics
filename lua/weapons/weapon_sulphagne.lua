@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+CreateConVar("toyboxclassics_sulphanage_originalbehavior", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED})
+
 SWEP.AdminSpawnable		= false
 SWEP.Spawnable 			= true
 SWEP.Category 				= "Toybox Classics"
@@ -145,7 +147,7 @@ function SWEP:PrimaryAttack()
         if (!SERVER) then return end
         
         if(tr.Entity != nil && tr.Entity:IsValid() && fadeAmt[tr.Entity] == nil) then
-            if(tr.Entity:IsPlayer() || tr.Entity:IsNPC() && tr.Entity:GetClass() != "npc_turret_floor") then
+            if((tr.Entity:IsPlayer() and GetConVar("toyboxclassics_sulphanage_originalbehavior"):GetBool()) || tr.Entity:IsNPC() && tr.Entity:GetClass() != "npc_turret_floor") then
                 if(tr.Entity:Health() < 2) then
                     fadeEntities[#fadeEntities+1] = tr.Entity;
                     tr.Entity.fadeAmt = 0;

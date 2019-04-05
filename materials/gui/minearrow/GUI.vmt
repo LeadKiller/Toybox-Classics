@@ -1,0 +1,5 @@
+"UnlitGeneric"
+{
+	"$basetexture" "gui/minearrow/GUI"
+	"$translucent" 1
+}

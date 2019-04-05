@@ -51,6 +51,10 @@ function ENT:Think()
 	self:AlertAllies()
 	self:ExplosionCheck()
 
+	if CLIENT then
+		self:DestroyShadow() 
+	end
+
 	if self.SwingTimer ~= 0 and self.SwingTimer < CurTime() then
 		self.SwingTimer = 0
 		self.Injured = false

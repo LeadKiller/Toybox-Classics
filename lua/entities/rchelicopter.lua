@@ -144,28 +144,28 @@ function ENT:PhysicsSimulate( phys, deltatime )
     local forw = angg:Forward():GetNormalized()*self.ForwardSpeed
     local righ = angg:Right():GetNormalized()*self.StrafeSpeed
     local uppp = angg:Up():GetNormalized()*200
-    if self.User:KeyDown(8) then
+    if self.User:KeyDown(IN_FORWARD) then
         poss = poss + forw
         angg.p = angg.p + 30
     end
-    if self.User:KeyDown(16) then
+    if self.User:KeyDown(IN_BACK) then
         poss = poss - forw
         angg.p = angg.p - 20
     end
-    if self.User:KeyDown(1024) then
+    if self.User:KeyDown(IN_MOVERIGHT) then
         poss = poss + righ
         angg.r = angg.r + 25
         angg.y = angg.y - 25
     end
-    if self.User:KeyDown(512) then
+    if self.User:KeyDown(IN_MOVELEFT) then
         poss = poss - righ
         angg.r = angg.r - 25
         angg.y = angg.y + 25
     end
-    if self.User:KeyDown(2) then
+    if self.User:KeyDown(IN_JUMP) then
         poss = poss + uppp
     end
-    if self.User:KeyDown(131072) then
+    if self.User:KeyDown(IN_SPEED) then
         poss = poss - uppp
     end
     self.RTimeX = math.Rand(1,2.5)
@@ -223,12 +223,12 @@ function ENT:Think()
     local okay = false
     if cam && cam:IsValid() then okay = true end
     self.User:SetNetworkedBool("UsingCam",okay)
-    if self.User:KeyDown(2048) and (not self.NextRocket or self.NextRocket < CurTime()) then self.NextRocket = CurTime() + 0.2 self:FireRocket(Angle(self.Entity:GetAngles().p - w_p, self.Entity:GetAngles().y + w_y, 0)) end
-    if  self.User:KeyDown(1) then
+    if self.User:KeyDown(IN_ATTACK2) and (not self.NextRocket or self.NextRocket < CurTime()) then self.NextRocket = CurTime() + 0.2 self:FireRocket(Angle(self.Entity:GetAngles().p - w_p, self.Entity:GetAngles().y + w_y, 0)) end
+    if  self.User:KeyDown(IN_ATTACK) then
         self:FireGun(Angle(self.Entity:GetAngles().p - w_p, self.Entity:GetAngles().y + w_y, 0))
 end
     --if (self.User:KeyDown(1)) then self:ChargeGun(true) else self:ChargeGun(false) end
-    if ((self.User:KeyDown(32) && (self.TimeX > 1)) || (self.Entity:WaterLevel()>(1)) || (!self.User:Alive()) )  and not self.CanExit then
+    if ((self.User:KeyDown(IN_USE) && (self.TimeX > 1)) || (self.Entity:WaterLevel()>(1)) || (!self.User:Alive()) )  and not self.CanExit then
     self.CanExit = true
     timer.Simple( 0.5, function()
     
@@ -264,7 +264,7 @@ return true
 end
 function ENT:OnRemove()
     if self.User then self.User.Heli = true
-    self.User:Spawn() end
+     end
     self.InUse = false
     if self.User then self.User:UnSpectate() end
     if self.User then self.User:DrawWorldModel(true) end

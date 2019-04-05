@@ -95,7 +95,7 @@ end
         
         cam.Start3D2D( muzzle.Pos-me:GetAimVector(), muzzleang, 0.05 )
        
-cam.IgnoreZ(true)
+
         //ammo panel
         draw.RoundedBox( 6, -320, 0, 320, 50, Color(11,11,11,100) )
         surface.SetDrawColor(0,0,0,255)
@@ -143,7 +143,7 @@ surface.DrawTexturedRect(-280,20,15,15)
 
 //text
         
-        
+        cam.IgnoreZ(true)
         draw.SimpleText("The Shittiest", "TextFont", 0, -100, Color(255,0,0,255))
         draw.SimpleText("SWEP In Town.", "TextFont", 15, -80, Color(255,0,0,255))
         cam.IgnoreZ(false)

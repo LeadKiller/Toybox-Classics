@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+CreateConVar("toyboxclassics_valkyrierockets_infinitefuel", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED})
+
 local Missile = {}
 Missile.Type = "anim"
 
@@ -52,7 +54,7 @@ function Missile:OnRemove()
         if self.Owner:GetMoveType(MOVETYPE_NONE) then
             self.Owner:SetMoveType(self:GetVar("OldMoveType",MOVETYPE_WALK))
         end
-        self.Owner:SetViewEntity(self.Owner)
+        self.Owner:SetViewEntity(nil)
         self.Owner.CanFireNewRocket = true
     end
     if IsValid(self.Trail) then self.Trail:Remove() end
@@ -152,7 +154,11 @@ function Missile:Initialize()
     self.RocketSound:Play()
     if SERVER then
         --timer.Create("toybox_629_nofuel",15,1,self.ExplodeMissile,self)
-        self.FuelEndTime = CurTime()+15
+        if !GetConVar("toyboxclassics_valkyrierockets_infinitefuel"):GetBool() then
+            self.FuelEndTime = CurTime()+15
+        else
+            self.FuelEndTime = CurTime()+9999
+        end
         hook.Add("KeyPress","toybox_629_keypress",function(ply,key)
             if ply == self.Owner then
                 if key == IN_ATTACK2 then self:ExplodeMissile()
@@ -232,6 +238,7 @@ if CLIENT then
         surface.DrawLine(ScrW()/2,ScrH()/2+214,ScrW()/2-8,ScrH()/2+230)
         surface.DrawLine(ScrW()/2,ScrH()/2+214,ScrW()/2+8,ScrH()/2+230)
         --fuel dispenser icon
+        if !GetConVar("toyboxclassics_valkyrierockets_infinitefuel"):GetBool() then
         surface.DrawLine(ScrW()/2+264,ScrH()/2-150,ScrW()/2+272,ScrH()/2-150)
         surface.DrawLine(ScrW()/2+264,ScrH()/2-150,ScrW()/2+264,ScrH()/2-144)
         surface.DrawLine(ScrW()/2+271,ScrH()/2-150,ScrW()/2+271,ScrH()/2-144)
@@ -243,6 +250,7 @@ if CLIENT then
         surface.DrawLine(ScrW()/2+273,ScrH()/2-135,ScrW()/2+277,ScrH()/2-135)
         surface.DrawLine(ScrW()/2+273,ScrH()/2-142,ScrW()/2+273,ScrH()/2-134)
         surface.DrawLine(ScrW()/2+271,ScrH()/2-144,ScrW()/2+273,ScrH()/2-142)
+        end
         --text
         draw.SimpleText("VP ".. math.floor((LocalPlayer():GetNWVector("toybox_629_rocketpos").x)*100)/100 .."/".. math.floor((LocalPlayer():GetNWVector("toybox_629_rocketpos").y)*100)/100 .."/".. math.floor((LocalPlayer():GetNWVector("toybox_629_rocketpos").z)*100)/100,"ArialNarrow18",ScrW()/2,ScrH()/2-256,Color(255,255,255,191),TEXT_ALIGN_CENTER,TEXT_ALIGN_CENTER)
         draw.SimpleText("DTT "..math.floor((LocalPlayer():GetNWVector("toybox_629_rocketpos"):Distance(LocalPlayer():GetNWVector("toybox_629_dtt")))*100)/100,"ArialNarrow18",ScrW()/2-208,ScrH()/2,Color(255,255,255,191),TEXT_ALIGN_RIGHT,TEXT_ALIGN_CENTER)
@@ -287,6 +295,7 @@ if CLIENT then
     end
 
     local function ValkyrieDrawFuelBar()
+        if GetConVar("toyboxclassics_valkyrierockets_infinitefuel"):GetBool() then return end
         local BarBottomLeftX,BarBottomLeftY = ScrW()/2+240,ScrH()/2+150
         surface.SetDrawColor(191,191,191,191)
         surface.DrawRect(BarBottomLeftX,BarBottomLeftY-300,16,300)
