@@ -98,28 +98,23 @@ function SWEP:PrimaryAttack()
    
     local ply = self.Owner
 
-    if CLIENT and IsFirstTimePredicted() then
+    if SERVER and IsFirstTimePredicted() then
    
-    local data = EffectData()
-    local wep = ply:GetViewModel()
-    local pos = Vector()
-    if wep and wep:IsValid() and game.SinglePlayer() then
-        pos = wep:GetAttachment(3).Pos
-        ang = wep:GetAttachment(3).Ang 
-        local vect = ply:OBBMaxs()
-        pos=pos+Vector(0,0,vect.z-7)
-    elseif wep and wep:IsValid() and !game.SinglePlayer() then
-    	PrintTable(wep:GetAttachments())
-        pos = wep:GetAttachment(2).Pos
-        ang = wep:GetAttachment(2).Ang 
-        local vect = ply:OBBMaxs()
-        pos=pos + ply:GetUp() * 5
-    end
-    local ang = ply:GetAimVector():Angle()
+            local data = EffectData()
+            local wep = ply:GetViewModel()
+            local pos = Vector()
+            if wep and wep:IsValid() then
+                    pos = wep:GetAttachment(1).Pos
+                    ang = wep:GetAttachment(1).Ang 
+                    local vect = ply:OBBMaxs()
+                    pos=pos+Vector(0,0,vect.z-7) - ply:GetAimVector() * 20
+            end
+            local ang = ply:GetAimVector():Angle()
+           
+            local data = EffectData()
+            data:SetOrigin(pos)
+            data:SetAngles(ang)
 
-    local data = EffectData()
-    data:SetOrigin(pos)
-    data:SetAngles(ang)
     util.Effect("railgun_shot",data)
 
 	end

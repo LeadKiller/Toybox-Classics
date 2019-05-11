@@ -1,0 +1,6 @@
+"VertexLitGeneric"
+{
+	"$baseTexture" "models/barrel"
+	"$bumpmap" "models/Barrel_norm"
+	"$model" "1"
+}

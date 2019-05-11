@@ -6,7 +6,8 @@ AddCSLuaFile()
 //    Since SWEPS like the Rick Roll SWEP went through,
 //  I thought it wouldn't mind to showcase that concept.
 
-CreateClientConVar("toyboxclassics_dn3drpg_80fov", "0")
+CreateClientConVar("toyboxclassics_dn3drpg_viewmodel_80fov", "0")
+CreateClientConVar("toyboxclassics_dn3drpg_viewmodel_shadows", "0")
 
 SWEP.Spawnable            = true
 SWEP.AdminSpawnable        = false
@@ -44,8 +45,8 @@ SWEP.HoldType = "rpg"
 SWEP.OwnerLastVelocity     = 0
 SWEP.OwnerLastGroundEntity = nil
 
-do
     SWEP.Sounds = {}
+do
     SWEP.Sounds["deploy"]        = Sound("dn_wpnsel.wav")
     SWEP.Sounds["fire"]            = Sound("dn_rpgfire.wav")
     
@@ -127,7 +128,7 @@ function SWEP:ViewModelDrawn()
     local vm = self.Owner:GetViewModel()
     if not vm then return end
 
-    if GetConVar("toyboxclassics_dn3drpg_80fov"):GetBool() then
+    if GetConVar("toyboxclassics_dn3drpg_viewmodel_80fov"):GetBool() then
         self.ViewModelFOV = 80
     else
         self.ViewModelFOV = 62
@@ -140,6 +141,10 @@ function SWEP:ViewModelDrawn()
     if not attach or not attach.Pos then return end
     
     local color = render.GetLightColor( LocalPlayer():GetShootPos() )
+
+    if GetConVar("toyboxclassics_dn3drpg_viewmodel_shadows"):GetBool() then
+        color = Color(color.r * 255 * 5, color.g * 255 * 5, color.b * 255 * 5)
+    end
     --local pos = (attach.Pos):ToScreen()
     --pos.x = pos.x / ScrW() - 0.5
     --pos.y = pos.y / ScrH() - 0.5
