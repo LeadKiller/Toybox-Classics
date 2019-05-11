@@ -138,7 +138,6 @@ end
 local Lasor = Material("cable/redlaser")
 local EFFECT = {}
 function EFFECT:Init(data)
-    self.Time = CurTime() + data:GetScale()
     
     self.Anti = Entity(data:GetMagnitude())
     self.RPG = data:GetEntity()
