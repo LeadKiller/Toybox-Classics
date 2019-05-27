@@ -219,7 +219,7 @@ function SWEP:SecondaryAttack()
                     pos = wep:GetAttachment(1).Pos
                     ang = wep:GetAttachment(1).Ang 
                     local vect = ply:OBBMaxs()
-                    pos=pos+Vector(0,0,vect.z-7)
+                    pos=pos+Vector(0,0,vect.z-7) - ply:GetAimVector() * 20
             end
             local ang = ply:GetAimVector():Angle()
            

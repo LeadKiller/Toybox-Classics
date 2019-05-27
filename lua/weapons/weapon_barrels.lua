@@ -18,7 +18,7 @@ SWEP.AutoSwitchFrom = false
 SWEP.FiresUnderwater = true                        
 SWEP.Weight = 5                                     
 SWEP.DrawCrosshair = true                           
-SWEP.Category = "2"                      
+                    
 SWEP.SlotPos = 2                                    
 SWEP.DrawAmmo = false                                
        
