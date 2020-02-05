@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 
 SWEP.Spawnable			= true		-- 
-SWEP.AdminSpawnable		= false		-- 
+SWEP.AdminOnly = true		-- 
 SWEP.Category 				= "Toybox Classics"
 SWEP.PrintName	   = "Dear Sistah"
 SWEP.Author		  = "Hurricaaane (Ha3)"		

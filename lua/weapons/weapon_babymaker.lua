@@ -22,7 +22,7 @@ SWEP.Weight				= 5			--
 SWEP.AutoSwitchTo		= true		-- 
 SWEP.AutoSwitchFrom		= false		-- 
 SWEP.Spawnable			= true		-- 
-SWEP.AdminSpawnable		= false		-- 
+SWEP.AdminOnly = true		-- 
 SWEP.Category 				= "Toybox Classics"
 --SWEP.AutoReload		= false		-- 
  

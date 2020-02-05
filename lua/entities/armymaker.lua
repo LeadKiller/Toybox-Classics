@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 ENT.Type = "anim"
 ENT.Spawnable = true
-ENT.AdminSpawnable = false
+ENT.AdminOnly = true
 ENT.Category = "Toybox Classics"
 ENT.PrintName           = "ArmyMaker"
 ENT.RenderGroup         = RENDERGROUP_TRANSLUCENT

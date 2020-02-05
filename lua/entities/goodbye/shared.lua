@@ -3,5 +3,5 @@ ENT.Type = "anim"
 
 ENT.PrintName = "Goodbye"
 ENT.Spawnable = true
-ENT.AdminSpawnable = false
+ENT.AdminOnly = true
 ENT.Category = "Toybox Classics"

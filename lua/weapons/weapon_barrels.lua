@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 SWEP.Category = "Toybox Classics"
 SWEP.Spawnable = true
-SWEP.AdminSpawnable = false
+SWEP.AdminOnly = true
 
 SWEP.ViewModelFOV = 64                              
 SWEP.ViewModel = "models/weapons/c_arms_animations.mdl"      
@@ -94,6 +94,7 @@ self.Owner:ViewPunch( Angle( rnda,rndb,rnda ) )
 local eyetrace = self.Owner:GetEyeTrace() 
 self.Weapon:EmitSound ( self.Secondary.Sound ) 
 self:ShootEffects() 
+if SERVER then
 local explode = ents.Create("env_explosion") 
 explode:SetPos( eyetrace.HitPos ) 
 explode:SetOwner( self.Owner ) 
@@ -104,6 +105,7 @@ explode:EmitSound("weapon_AWP.Single", 400, 400 )
 self.Weapon:SetNextPrimaryFire( CurTime() + self.Secondary.Delay ) 
 self.Weapon:SetNextSecondaryFire( CurTime() + self.Secondary.Delay ) 
 self:TakePrimaryAmmo(self.Secondary.TakeAmmo) 
+end
 end 
 //SWEP:SecondaryFire()\\ 
 

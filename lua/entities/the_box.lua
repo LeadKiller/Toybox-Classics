@@ -1,7 +1,8 @@
 AddCSLuaFile()
 
 ENT.Type   = "anim"
-ENT.Spawnable	= false
+ENT.Spawnable	= true
+ENT.AdminOnly = true
 ENT.Category		= "Toybox Classics"
 ENT.PrintName           = "Escape The Box"
 ENT.RenderGroup         = RENDERGROUP_OPAQUE
