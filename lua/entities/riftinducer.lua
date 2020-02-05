@@ -382,7 +382,7 @@ else //CLIENT
 
 		local newpos = LerpVector( math.sqrt( particle.LifeTime - CurTime() ), particle.Owner:GetPos(), particle.StartPos + particle.Velocity * ( CurTime() - particle.StartTime ) )
 		particle:SetPos( newpos )
-		particle:SetNextThink( CurTime() + 0.1 )
+		particle:SetNextThink( CurTime() )
 
 	end
 
@@ -427,7 +427,7 @@ else //CLIENT
 					particle:SetEndAlpha( 20 )
 
 					particle:SetThinkFunction( RiftParticlesThink )
-					particle:SetNextThink( CurTime() + 0.1 )
+					particle:SetNextThink( CurTime() )
 
 				end
 			end

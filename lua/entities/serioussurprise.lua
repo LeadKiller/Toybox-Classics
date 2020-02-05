@@ -10,6 +10,21 @@ ENT.Category = "Toybox Classics"
 function ENT:Initialize()
 	self:SetModel("models/props_lab/monitor02.mdl")
 
+	if SERVER then
+		if !navmesh.GetAllNavAreas()[1] or #ents.FindByClass("serioussurprise") > 1 then
+			if !navmesh.GetAllNavAreas()[1] then
+				self:GetNWEntity("owner", self):PrintMessage(HUD_PRINTTALK, "There is no navmesh on the map! Create one by doing nav_generate in console!")
+			else
+				self:GetNWEntity("owner", self):PrintMessage(HUD_PRINTTALK, "There is already a serious surprise!")
+			end
+			local explosion = ents.Create("env_explosion")
+			explosion:SetPos(self:GetPos()+self:OBBCenter())
+			explosion:Spawn()
+			explosion:Fire("explode")
+			self:Remove()
+		end
+	end
+
 	if (SERVER) then
 		self:PhysicsInit(SOLID_VPHYSICS)
 		self:SetMoveType(MOVETYPE_VPHYSICS)
@@ -17,21 +32,11 @@ function ENT:Initialize()
 	end
 
 	self.Created = CurTime()
+	self.StartTime = CurTime()
 
 	if (CLIENT) then
 		self.NextFlicker = self.Created + 5
 		self.FlickerSpacing = 0.2
-	end
-	
-	if SERVER then
-		if !navmesh.GetAllNavAreas()[1] then
-			self:GetNWEntity("owner", self):PrintMessage(HUD_PRINTTALK, "There is no navmesh on the map! Create one by doing nav_generate in console!")
-			local explosion = ents.Create("env_explosion")
-			explosion:SetPos(self:GetPos()+self:OBBCenter())
-			explosion:Spawn()
-			explosion:Fire("explode")
-			self:Remove()
-		end
 	end
 end
 
@@ -49,6 +54,7 @@ function ENT:CheckOwner()
 				playedSound = true
 			end
 		end
+		self.StartTime = CurTime()
 	end
 end
 
@@ -96,16 +102,29 @@ function ENT:Think()
 	
 	if SERVER then
 		--print(self:GetOwner())
+	if self:GetNWFloat("wave") ~= 0 then
+		for k, v in pairs(player.GetAll()) do
+			if v:GetInfoNum("toyboxclassics_serioussurprise_hud", 0) ~= 0 then
+				v:PrintMessage(HUD_PRINTCENTER, "Score: " .. self:GetNWFloat("score") .. "\nTime Alive: " .. string.FormattedTime(math.floor(math.abs(self.StartTime - CurTime())), "%1i:%1i"))
+			end
+		end
+	end
 	end
 	self:CheckOwner()
 	self:SpawnKamikaze()
 end
 
+if CLIENT then
+	CreateClientConVar("toyboxclassics_serioussurprise_hud", "0", true, true)
+end
+
 function ENT:OnRemove()
-	if (SERVER) and navmesh.GetAllNavAreas()[1] then
+	if (SERVER) and navmesh.GetAllNavAreas()[1] and #ents.FindByClass("serioussurprise") <= 1 then
+		local timealive = string.FormattedTime(math.floor(math.abs(self.StartTime - CurTime())), "%1i:%1i")
 		for k,v in pairs(player.GetAll()) do
 			v:PrintMessage(HUD_PRINTTALK, "Your score: "..self:GetNWFloat("score"))
-			v:PrintMessage(HUD_PRINTCENTER, "Your score: "..self:GetNWFloat("score"))
+			v:PrintMessage(HUD_PRINTCENTER, "Your score: "..self:GetNWFloat("score") .. "\nTime Alive: " .. timealive)
+			v:PrintMessage(HUD_PRINTTALK, "Time Alive: "..timealive)
 		end
 		for k, v in pairs(ents.FindByClass("npc_kamikaze")) do
 			if v:GetNWEntity("owner", self) == self then

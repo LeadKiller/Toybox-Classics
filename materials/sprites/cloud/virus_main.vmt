@@ -1,0 +1,6 @@
+"UnlitGeneric" 
+{ 
+	"$basetexture"		"sprites/cloud/virus_main" 
+	"$vertexcolor" 		1 
+	"$vertexalpha" 		1 
+} 
