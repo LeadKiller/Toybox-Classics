@@ -98,16 +98,18 @@ function SWEP:PrimaryAttack()
    
     local ply = self.Owner
 
-    if SERVER and IsFirstTimePredicted() then
+    if (game.SinglePlayer() and SERVER and IsFirstTimePredicted()) or (!game.SinglePlayer()) then
    
             local data = EffectData()
             local wep = ply:GetViewModel()
             local pos = Vector()
             if wep and wep:IsValid() then
                     pos = wep:GetAttachment(1).Pos
-                    ang = wep:GetAttachment(1).Ang 
+                    ang = wep:GetAttachment(1).Ang
                     local vect = ply:OBBMaxs()
-                    pos=pos+Vector(0,0,vect.z-7) - ply:GetAimVector() * 20
+                    if (game.SinglePlayer() and SERVER) then
+                        pos=pos+Vector(0,0,vect.z-7) - ply:GetAimVector() * 20
+                    end
             end
             local ang = ply:GetAimVector():Angle()
            

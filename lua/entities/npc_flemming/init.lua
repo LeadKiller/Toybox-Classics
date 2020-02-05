@@ -17,6 +17,7 @@ function ENT:Initialize()
 
 	self:SetHealth(math.random(92220,112220))
 
+	-- do this serverside so hitbox can match up
 	self:ManipulateBoneScale(self:LookupBone("ValveBiped.Bip01_Head1"), Vector(2,2,2))
 end
 

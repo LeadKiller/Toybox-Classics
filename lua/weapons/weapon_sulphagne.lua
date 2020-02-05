@@ -1,8 +1,6 @@
 AddCSLuaFile()
 
-CreateConVar("toyboxclassics_sulphanage_originalbehavior", "0", {FCVAR_ARCHIVE, FCVAR_REPLICATED})
-
-SWEP.AdminSpawnable		= false
+SWEP.AdminOnly		= false
 SWEP.Spawnable 			= true
 SWEP.Category 				= "Toybox Classics"
 SWEP.PrintName            = "Sulphagne"            
@@ -147,8 +145,27 @@ function SWEP:PrimaryAttack()
         if (!SERVER) then return end
         
         if(tr.Entity != nil && tr.Entity:IsValid() && fadeAmt[tr.Entity] == nil) then
-            if((tr.Entity:IsPlayer() and GetConVar("toyboxclassics_sulphanage_originalbehavior"):GetBool()) || tr.Entity:IsNPC() && tr.Entity:GetClass() != "npc_turret_floor") then
+            if((tr.Entity:IsPlayer() || tr.Entity:IsNPC()) && tr.Entity:GetClass() != "npc_turret_floor") then
                 if(tr.Entity:Health() < 2) then
+                    if tr.Entity:IsPlayer() then
+                        local ply = tr.Entity
+                        tr.Entity = ents.Create("prop_ragdoll")
+                        local proprag = tr.Entity
+                        proprag:SetPos(ply:GetPos())
+                        proprag:SetModel(ply:GetModel())
+                        proprag:SetColor(Color(255, 100, 0))
+                        proprag:Spawn()
+                        for i = 0, proprag:GetPhysicsObjectCount( ) do
+                            local physobj = proprag:GetPhysicsObjectNum( i )
+                            if (physobj) and IsValid(physobj)then
+                                local pos, ang = ply:GetBonePosition( ply:TranslatePhysBoneToBone( i ) )
+                                physobj:SetPos(pos)
+                                physobj:SetAngles(ang)
+                                physobj:EnableMotion(false)
+                            end
+                        end
+                        ply:KillSilent()
+                    end
                     fadeEntities[#fadeEntities+1] = tr.Entity;
                     tr.Entity.fadeAmt = 0;
                     tr.Entity:SetMaterial("models/debug/debugwhite")
@@ -158,7 +175,9 @@ function SWEP:PrimaryAttack()
                 else
                     tr.Entity:TakeDamage( 1, self.Owner, self.Owner )
                     local dmgAmt = tr.Entity:Health() / tr.Entity:GetMaxHealth();
-                    tr.Entity:SetColor(Color(255, 255-dmgAmt*35, 255-dmgAmt*125, 255))
+                    if !tr.Entity:IsPlayer() then
+                        tr.Entity:SetColor(Color(255, 255-dmgAmt*35, 255-dmgAmt*125, 255))
+                    end
                 end
                 
             else

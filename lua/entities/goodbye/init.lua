@@ -119,7 +119,7 @@ function ENT:Suicide()
 end
 
 function ENT:DramaticDie()
-		game.ConsoleCommand( "host_timescale .4\n" )
+		game.SetTimeScale(0.4)
 	for _, ply in ipairs( player.GetAll() ) do
 		ply:Freeze( true )
 		ply:StripWeapons()
@@ -130,7 +130,7 @@ function ENT:DramaticDie()
 	timer.Simple( 17, function()
 		if !IsValid( self ) then return end
 		self.Alpha = 255
-		game.ConsoleCommand( "host_timescale 1\n" )
+		game.SetTimeScale(1)
 		for _, ply in ipairs( player.GetAll() ) do
 			ply:Kill()
 			ply:Freeze( false )
@@ -147,7 +147,7 @@ function ENT:OnRemove()
 	for _, ply in ipairs( player.GetAll() ) do
 		ply:Freeze( false )
 	end
-	game.ConsoleCommand( "host_timescale 1\n" )
+	game.SetTimeScale(1)
 	if IsValid( self.Balloon ) then
 		self.Balloon:Remove()
 	end

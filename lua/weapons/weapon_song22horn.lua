@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 
 SWEP.Spawnable            = true
-SWEP.AdminSpawnable        = false
+SWEP.AdminOnly = true
 SWEP.Category = "Toybox Classics"
 SWEP.AutoSwitchTo        = true
 SWEP.AutoSwitchFrom        = false
@@ -104,16 +104,19 @@ end
 
 SWEP.RandomEffects = {
     {function (npc,pl)
-        npc:Fire ("ignite","120",0)
+        npc:Ignite(120, 0)
         npc:SetHealth (math.Clamp (npc:Health(), 5, 25))
-        npc:AddEntityRelationship (pl,D_FR,99)
+        if npc:IsNPC() then
+            npc:AddEntityRelationship (pl,D_FR,99)
+        end
     end, 1},
-    {function (npc)
+    {function (npc,pl)
         local explos = ents.Create ("env_Explosion")
         explos:SetPos (npc:GetPos() + Vector (0,0,4))
         explos:SetKeyValue ("iMagnitude", 200)
         explos:SetKeyValue ("iRadiusOverride", 50)
         explos:Spawn ()
+        explos:SetOwner(pl)
         explos:Fire ("explode", "", 0)
         explos:Fire ("kill", "", 0.1)
     end, 0.1},
@@ -153,7 +156,7 @@ function SWEP:Think ()
         if self.Influence > 0.5 and self.LastRandomEffects + self.RandomEffectsDelay < CurTime() then
             --print ("influence: "..self.Influence)
             for _,npc in pairs (ents.FindInSphere (self.Owner:GetPos(), 768)) do
-                if npc:IsNPC() and npc:Health() > 0 then
+                if (npc:IsNPC() or (npc:IsPlayer())) and npc:Health() > 0 then
                     --print (tostring(npc))
                     --we want only NPCs vaguely in view to be affected, so players can always see their torture victims. also, it's more loyal to the chaingun-esque original shown in video.
                     local vec1 = ((npc:GetShootPos() or npc:GetPos()) - self.Owner:GetShootPos()):GetNormalized()

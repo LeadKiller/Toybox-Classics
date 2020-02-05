@@ -51,6 +51,8 @@ function SWEP:PrimaryAttack()
         self.DELAY = CurTime() + 1
         
     self:EmitSound( self.ShootSound )
+
+    if CLIENT then return end
     
     local arrow = ents.Create( "minecraft_arrow" )
     arrow:SetPos( self:GetOwner():GetShootPos() )

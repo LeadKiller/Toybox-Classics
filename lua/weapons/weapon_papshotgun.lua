@@ -174,7 +174,7 @@ function SWEP:FireSlug()
 			local Pos1 = tr.HitPos + tr.HitNormal
 			local Pos2 = tr.HitPos - tr.HitNormal
 			util.Decal("FadingScorch", Pos1, Pos2)
-			if i==10 and CLIENT then
+			if i==10 and ((CLIENT and !game.SinglePlayer()) or (SERVER and game.SinglePlayer())) then
 				local ED = EffectData()
 				ED:SetStart(pos)
 				ED:SetOrigin(tr.HitPos)

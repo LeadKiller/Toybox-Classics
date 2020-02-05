@@ -1,5 +1,7 @@
 AddCSLuaFile()
 
+local convar = CreateClientConVar("toyboxclassics_lasergun2_hudfix", "0", true, false)
+
 SWEP.Category = "Toybox Classics"
 SWEP.Spawnable = true
 SWEP.AdminSpawnable = false
@@ -43,6 +45,10 @@ end
         
         local tr = self.Owner:GetEyeTraceNoCursor()
     
+        if convar:GetBool() then
+        cam.IgnoreZ(true)
+        end
+
         if tr.Hit and tr.HitNonWorld and (tr.Entity:IsNPC() or (tr.Entity:IsPlayer() and tr.Entity:Alive())) && self.Weapon:Clip1() >2 then
         hit = tr.Entity:GetClass():sub(5,-1)
         color = Color(0,255,0,255)
@@ -78,7 +84,8 @@ end
         if self.Weapon:Clip1() >2 then
         
       
-    
+        cam.IgnoreZ(false)
+
         render.SetMaterial(Material("sprites/bluelaser1"))
 
         render.DrawBeam(muzzle.Pos, self.Owner:GetEyeTrace().HitPos, 5, 0, 0, Color(100,0,255,255))
@@ -95,6 +102,10 @@ end
         
         cam.Start3D2D( muzzle.Pos-me:GetAimVector(), muzzleang, 0.05 )
        
+
+        if convar:GetBool() then
+        cam.IgnoreZ(true)
+        end
 
         //ammo panel
         draw.RoundedBox( 6, -320, 0, 320, 50, Color(11,11,11,100) )
@@ -142,8 +153,9 @@ surface.SetDrawColor( 255, 255, 255, 255 )
 surface.DrawTexturedRect(-280,20,15,15) 
 
 //text
-        
+        if !convar:GetBool() then
         cam.IgnoreZ(true)
+        end
         draw.SimpleText("The Shittiest", "TextFont", 0, -100, Color(255,0,0,255))
         draw.SimpleText("SWEP In Town.", "TextFont", 15, -80, Color(255,0,0,255))
         cam.IgnoreZ(false)

@@ -55,7 +55,6 @@ end
 function SWEP:Precache()
 end
 
-
 /*---------------------------------------------------------
    Name: SWEP:PrimaryAttack( )
    Desc: +attack1 has been pressed
@@ -81,19 +80,13 @@ function FLARE:flareBurn(self, timerstr)
         //self:Fire("kill","",0);
         for i,v in pairs(entz) do
             if ((v != self) and (v != self:GetOwner())) then
-                if (v:IsPlayer()) then
+                if (v:IsPlayer() or v:IsNPC()) then
 
                     //if( v:Team() ~= 1001 ) then 
-                        v:Fire("ignitelifetime","5",0);
-                        v:TakeDamage( 15 ,self:GetOwner() );
+                        v:Ignite(5, 0)
+                        v:TakeDamage( 15, self:GetOwner() );
                         destroy = true;
                     //end
-                else
-                    if (v:IsNPC()) then
-                        v:Fire("ignitelifetime","5",0);
-                        v:TakeDamage( 15 ,self:GetOwner() );
-                        destroy = true;
-                    end
                 end
             end
         end

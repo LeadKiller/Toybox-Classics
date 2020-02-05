@@ -176,12 +176,6 @@ end
 
 
 function SWEP:SecondaryAttack()
-	local pos = self.Owner:GetShootPos()
-	local ang = self.Owner:GetAimVector()
-	local shooteffect = EffectData()
-	shooteffect:SetOrigin(pos + (ang * 40))
-	--util.Effect("electrocannon_shoot", shooteffect)
-
 	-- too annoying, sorry
 	if SERVER then
 		local ent = ents.Create("electromissile")
@@ -204,6 +198,12 @@ function SWEP:SecondaryAttack()
 	self:EmitSound("weapons/stinger_fire1.wav", 90, 100)
 	self:SendWeaponAnim(ACT_VM_PRIMARYATTACK)
 	self.Owner:SetAnimation(PLAYER_ATTACK1)
+
+	local pos = self.Owner:GetShootPos()
+	local ang = self.Owner:GetAimVector()
+	local shooteffect = EffectData()
+	shooteffect:SetOrigin(pos + (ang * 40))
+	util.Effect("electrocannon_shoot", shooteffect)
 
 	self:SetNextPrimaryFire(CurTime() + 2)
 	self:SetNextSecondaryFire(CurTime() + 2)

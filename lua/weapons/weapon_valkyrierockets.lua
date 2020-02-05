@@ -49,13 +49,14 @@ function SWEP:PrimaryAttack()
         if self.Owner:WaterLevel() >= 2 then return end
         if self.Owner.CanFireNewRocket == false then return end
         self.Rocket = ents.Create("toybox_629_valkyrie_cr")
+        self.Rocket:SetOwner(self.Owner)
         local SpawnOrExplode = {}
         SpawnOrExplode.Start = self.Owner:GetPos()
         SpawnOrExplode.Endpos = self.Owner:GetPos()+(self.Owner:GetAimVector()*40)
         SpawnOrExplode.Filter = { self.Owner }
         local SpawnOrExplodeTrace = util.TraceLine(SpawnOrExplode)
         if SpawnOrExplodeTrace.Hit == true then
-            self.Rocket:SetPos(self.Owner:GetPos()+(self.Owner:GetForward()*60)+Vector(0,0,36))
+            self.Rocket:SetPos(self.Owner:GetPos()+(self.Owner:GetForward()*90)+Vector(0,0,36))
         else
             self.Rocket:SetPos(self.Owner:GetPos()+Vector(0,0,36))
         end

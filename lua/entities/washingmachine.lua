@@ -15,6 +15,8 @@ ENT.AdminSpawnable        = true
 ENT.Running = false
 ENT.Item = NULL
 
+local convar = CreateConVar("toyboxclassics_washingmachine_cleanonlyprop", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Clear decals on a prop rather than all decals. (For multiplayer)")
+
 //sounds
 //ambient/levels/labs/machine_moving_loop4.wav
 //HL1/fvox/bell.wav
@@ -75,7 +77,9 @@ if SERVER then
         
         self.Running = true
         TimeToFinish = CurTime() + WASHTIME
-        
+        if !self.Sound.Play then
+            self.Sound = CreateSound(self, Sound("ambient/levels/labs/machine_moving_loop4.wav"))
+        end
         self.Sound:Play()
     end
     
@@ -99,8 +103,11 @@ if SERVER then
         end
         self.Item:SetColor(Color(255,255,255,255))
         self.Item:SetMaterial("")
-        BroadcastLua("RunConsoleCommand('r_cleardecals')")
-        
+        if !convar:GetBool() then
+            BroadcastLua("RunConsoleCommand('r_cleardecals')")
+        else
+            self.Item:RemoveAllDecals()
+        end
         self.Item:SetParent()
         self.Item:SetPos(self:GetPos() + Vector(0,0,50))
         self.Item:SetNoDraw(false)

@@ -124,6 +124,13 @@ local function SaveViewModelIndex(id)
 	file.Write("nk.txt", tostring(id))
 end
 
+hook.Add("HUDDrawTargetID", "NinjaKnife", function() // what is this, halo?
+	local ent = LocalPlayer():GetEyeTrace().Entity
+	if IsValid(ent) and ent:GetMaterial() == "effects/strider_bulge_dudv" then
+		return true
+	end
+end)
+
 
 function SWEP:SetupDataTables()
 	self:NetworkVar("Float", 0, "ViewModelIndex")

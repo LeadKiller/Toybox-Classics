@@ -98,3 +98,23 @@ function SWEP:ViewModelDrawn()
 	end
 	return false
 end
+
+function SWEP:DrawWorldModel()
+	if self:GetDTBool( 0 ) then
+		if not self.RocketEntity then return end
+		if not self.StartTime then self.StartTime = CurTime() end
+		local attach = self:GetAttachment( 1 )
+		if not attach then return end
+		local pos = attach.Pos
+		local ang = attach.Ang
+		local time = 0.001 + (CurTime() - self.StartTime)
+		local dir = time * 50 * ang:Forward() + (time * 1.5) ^ 2 * 90 * -ang:Up() -- thats some pretty complex math for just turning down
+		local angle = dir:Angle()
+		self.RocketEntity:SetPos( pos + dir )
+		self.RocketEntity:SetAngles( angle )
+	else
+		self.StartTime = nil
+	end
+
+	self:DrawModel()
+end

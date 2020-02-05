@@ -179,6 +179,7 @@ local function DrawWeapon()
 local pl = LocalPlayer()
 local wep = pl:GetActiveWeapon()
 
+if pl:ShouldDrawLocalPlayer() then return end
 if not IsValid( wep ) then return end
 if not wep.PixelWeapon then return end
 
@@ -217,7 +218,7 @@ if not col then continue end
 
 if lastCol != col then
 
-surface.SetDrawColor( col )
+surface.SetDrawColor(col)
 lastCol = col
 
 end
@@ -274,7 +275,7 @@ if not col then continue end
 
 if lastCol != col then
 
-surface.SetDrawColor( col )
+surface.SetDrawColor(col)
 lastCol = col
 
 end

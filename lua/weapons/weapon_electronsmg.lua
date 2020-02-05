@@ -126,32 +126,34 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:SecondaryAttack()
+    if SERVER then
+        local ent = ents.Create ("prop_combine_ball")
+        ent:SetEntity ("prop_combine_ball")
+        ent:SetPos (self.Owner:EyePos() + (self.Owner:GetAimVector() * 30))
+        ent:SetAngles (self.Owner:EyeAngles())
+        ent:Spawn()
 
-    local ent = ents.Create ("prop_combine_ball")
-    ent:SetEntity ("prop_combine_ball")
-    ent:SetPos (self.Owner:EyePos() + (self.Owner:GetAimVector() * 30))
-    ent:SetAngles (self.Owner:EyeAngles())
-    ent:Spawn()
 
+        ent:Activate()
 
-    ent:Activate()
+        ent:SetOwner(self.Owner)
 
-    ent:SetOwner(self.Owner)
+        local phys = ent:GetPhysicsObject()
+        local tr = self.Owner:GetEyeTrace()
+        local shot_length = tr.HitPos:Length()
+              phys:ApplyForceCenter (self.Owner:GetAimVector():GetNormalized() * math.pow (shot_length, 3))
+        local bullet = {}
+        bullet.Tracer = 0
+        local rnda = -self.Primary.Recoil
+        local rndb = self.Primary.Recoil * math.random(-1, 1)
+        self.Owner:FireBullets( bullet )
+        self.Owner:ViewPunch( Angle( rnda,rndb,rnda ) )
+        self:TakePrimaryAmmo(self.Secondary.TakeAmmo)
+        self.Weapon:SetNextSecondaryFire( CurTime() + self.Secondary.Delay )
+    end
 
-    local phys = ent:GetPhysicsObject()
-    local tr = self.Owner:GetEyeTrace()
-    local shot_length = tr.HitPos:Length()
-          phys:ApplyForceCenter (self.Owner:GetAimVector():GetNormalized() * math.pow (shot_length, 3))
-    local bullet = {}
-    bullet.Tracer = 0
-    local rnda = -self.Primary.Recoil
-    local rndb = self.Primary.Recoil * math.random(-1, 1)
-    self:ShootEffects()
-    self.Owner:FireBullets( bullet )
     self.Weapon:EmitSound(Sound(self.Secondary.Sound))
-    self.Owner:ViewPunch( Angle( rnda,rndb,rnda ) )
-    self:TakePrimaryAmmo(self.Secondary.TakeAmmo)
-    self.Weapon:SetNextSecondaryFire( CurTime() + self.Secondary.Delay )
+    self:ShootEffects()
 end
 
 function SWEP:Holster()

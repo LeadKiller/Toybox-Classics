@@ -105,7 +105,7 @@ function SWEP:Think()
 end
 
 function SWEP:CreateIcething(ent)
-    if ent:IsNPC() then
+    if ent:IsNPC() or ent:IsPlayer() then
         local proprag = ents.Create("prop_ragdoll")
         proprag:SetModel(ent:GetModel())
         proprag:SetPos(ent:GetPos())
@@ -116,17 +116,45 @@ function SWEP:CreateIcething(ent)
         for i=0,32 do
             proprag:SetBodygroup(i,ent:GetBodygroup(i))
         end
-        for i = 0, proprag:GetPhysicsObjectCount( ) do
+        for i = 0, proprag:GetPhysicsObjectCount() do
             local physobj = proprag:GetPhysicsObjectNum( i )
             if (physobj) and IsValid(physobj)then
                 local pos, ang = ent:GetBonePosition( ent:TranslatePhysBoneToBone( i ) )
                 physobj:SetPos(pos)
                 physobj:SetAngles(ang)
                 physobj:EnableMotion(false)
+                timer.Simple(0.1, function()
+                    if IsValid(physobj) then
+                        constraint.Weld(proprag, proprag, 1, i, 0)
+                    end
+                end)
             end
         end
-        ent:Remove()
+        if ent:IsNPC() then
+            ent:Remove()
+        elseif ent:IsPlayer() then
+            timer.Simple(0.1, function() -- stupid net delay
+                if IsValid(proprag) then
+                    net.Start("proprag_Color")
+                    net.WriteTable({ent:GetPlayerColor(), proprag})
+                    net.Broadcast()
+                end
+            end)
+
+            proprag:SetMaterial("models/shiny")
+
+            ent:KillSilent()
+        end
     end
+end
+
+if SERVER then
+    util.AddNetworkString("proprag_Color")
+elseif CLIENT then
+    net.Receive("proprag_Color", function()
+        local tab = net.ReadTable()
+        tab[2].GetPlayerColor = function() return tab[1] end
+    end)
 end
 
 function DestroyIcething(ent)

@@ -76,7 +76,7 @@ function SWEP:Holster()
     local vm = self.Owner:GetViewModel()
     if vm then
         vm:SetColor( Color(255, 255, 255, 255) )
-        
+        vm:SetMaterial("")
     end
     
 end
@@ -87,6 +87,7 @@ function SWEP:OnRemove()
     local vm = self.Owner:GetViewModel()
     if IsValid(vm) then
         vm:SetColor( Color(255, 255, 255, 255) )
+        vm:SetMaterial("")
     end
     
 end
@@ -94,8 +95,9 @@ end
 function SWEP:PrimaryAttack()
     if not self:CanPrimaryAttack() then return false end
     
+    self:EmitSound( self.Sounds.fire )
+
     if SERVER then
-        self:EmitSound( self.Sounds.fire )
         
         local ent = ents.Create( "dn_rpgmissile" )
         local ang = self.Owner:GetAimVector():Angle()
@@ -124,8 +126,7 @@ function SWEP:ShouldDropOnDie()
     
 end
 
-function SWEP:ViewModelDrawn()
-    local vm = self.Owner:GetViewModel()
+function SWEP:ViewModelDrawn(vm)
     if not vm then return end
 
     if GetConVar("toyboxclassics_dn3drpg_viewmodel_80fov"):GetBool() then
@@ -134,8 +135,11 @@ function SWEP:ViewModelDrawn()
         self.ViewModelFOV = 62
     end
     
-    vm:SetColor( Color(0, 0, 0, 1) )
+    vm:SetColor( Color(0, 0, 255, 1) )
     vm:SetRenderMode(RENDERMODE_TRANSALPHA)
+    if !game.SinglePlayer() then
+        vm:SetMaterial("color")
+    end
     
     local attach = vm:GetAttachment( 1 )
     if not attach or not attach.Pos then return end
