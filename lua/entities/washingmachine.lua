@@ -15,7 +15,7 @@ ENT.AdminSpawnable        = true
 ENT.Running = false
 ENT.Item = NULL
 
-local convar = CreateConVar("toyboxclassics_washingmachine_cleanonlyprop", "0", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Clear decals on a prop rather than all decals. (For multiplayer)")
+local convar = CreateConVar("toyboxclassics_washingmachine_cleanonlyprop", "1", {FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "Clear decals on a prop rather than all decals. (For multiplayer)")
 
 //sounds
 //ambient/levels/labs/machine_moving_loop4.wav

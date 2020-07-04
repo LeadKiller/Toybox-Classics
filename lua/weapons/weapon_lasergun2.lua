@@ -1,6 +1,6 @@
 AddCSLuaFile()
 
-local convar = CreateClientConVar("toyboxclassics_lasergun2_hudfix", "0", true, false)
+local convar = CreateClientConVar("toyboxclassics_lasergun2_hudfix", "1", true, false)
 
 SWEP.Category = "Toybox Classics"
 SWEP.Spawnable = true
@@ -36,7 +36,7 @@ if CLIENT then
 end
 
 
-        function SWEP:ViewModelDrawn()
+        function SWEP:PostDrawViewModel()
         local me = self.Owner
         local isfiring
         local color = Color(0,0,0,255)
@@ -143,7 +143,7 @@ end
         surface.DrawOutlinedRect(-155, -137, 10, 10)  
         
         //distance
-        draw.SimpleText("Distance: " .. math.floor(self.Owner:GetEyeTrace().HitPos:Distance(self.Owner:GetPos())), "ScoreboardText", -165, -120, Color(0,0,0,255))
+        draw.SimpleText("Distance: " .. math.floor(self.Owner:GetEyeTrace().HitPos:Distance(self.Owner:GetPos())), "ScoreboardText", -165, -120, (convar:GetBool() and Color(255, 255, 255, 50)) or Color(0,0,0,255))
         draw.SimpleText("Target: " .. hit, "ScoreboardText", -120, -200, Color(255,255,255,255))
     
 
