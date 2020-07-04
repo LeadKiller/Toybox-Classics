@@ -68,6 +68,11 @@ end
 function SWEP:DrawWorldModel()
 	self:DrawModel()
 	if (IsValid(self.Owner)) then
+		if !IsValid(self.CModel_W2) then
+			self.CModel_W2 = ClientsideModel(self.WorldModel)
+			self.CModel_W2:SetNoDraw(true)
+		end
+
 		local matrix = self.Owner:GetBoneMatrix(self.Owner:LookupBone("ValveBiped.Bip01_L_Hand"))
 		if (matrix) then
 			local pos = matrix:GetTranslation()
