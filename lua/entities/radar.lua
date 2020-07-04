@@ -69,7 +69,7 @@ if CLIENT then
     
     
     for _, u in pairs( unit ) do
-    if u:IsNPC() or u:IsPlayer() then
+    if u:IsNPC() or (u:IsNextBot() or u.Type == "nextbot") or u:IsPlayer() then
         
         if not u:IsValid() then continue end
         if u == self then continue end
