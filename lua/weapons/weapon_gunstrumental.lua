@@ -984,7 +984,7 @@ if CLIENT then
 		end
 		
 	end
-	
+	local rainbow = 0
 	function GUNSTRU:BuildContents()
 		//////////////////////////////////////////////////////
 		//
@@ -1013,13 +1013,18 @@ if CLIENT then
 			local item = "title"
 			header.CTS[item] = vgui.Create("DLabel", header)
 			header.CTS[item]:SetMouseInputEnabled( true )
-			header.CTS[item]:SetText("Gunstrumental")
+			header.CTS[item]:SetText("")
 			header.CTS[item]:SetFont("Default")
 			header.CTS[item]:SetColor(Color(0, 0, 0))
 			header.CTS[item]:SetContentAlignment( 5 )
-			header.CTS[item].Paint = function (self)
-				surface.SetDrawColor( 0, 0, 0, 96 )
-				surface.DrawRect( 0, 0, self:GetWide(), self:GetTall() )
+			header.CTS[item].Paint = function (self, w, h)
+				rainbow = rainbow + FrameTime() * 35
+				if rainbow > 360 then
+					rainbow = 0
+				end
+
+				draw.RoundedBoxEx(4, 0, 0, w, h, Color(50, 50, 50), true, true, false, false)
+				draw.SimpleTextOutlined("Gunstrumental", "DermaDefault", w / 2, h / 2, HSVToColor(rainbow, 1, 1), TEXT_ALIGN_CENTER, TEXT_ALIGN_CENTER, 1, Color(0, 0, 0))
 			end
 			header.CTS[item].OnMousePressed = function( self )
 				self.mx, self.my = self:CursorPos()
@@ -1262,6 +1267,43 @@ if CLIENT then
 									local edit = string.Explode("\n", self.gunstru)
 									GUNSTRU:Gunstrumentalize(edit[1] or "", edit[2] or "")
 									
+								end
+								if data[3] then
+									local x, y = button:GetSize()
+									local author = vgui.Create("DButton", button)
+									author:SetSize(200, 20)
+									author:Center()
+									author:SetText("Unknown")
+									author:Dock(LEFT)
+									steamworks.RequestPlayerInfo(data[3], function(name) author:SetText("By " .. name) end)
+									function author:Paint(w, h)
+										surface.SetFont("Default")
+										local w = surface.GetTextSize(self:GetText())
+										self:SetSize(10 + w, 20)
+									end
+
+									function author:DoClick()
+										gui.OpenURL("http://steamcommunity.com/profiles/" .. data[3])
+									end
+								end
+
+								if data[4] then
+									local x, y = button:GetSize()
+									local author = vgui.Create("DButton", button)
+									author:SetSize(200, 20)
+									author:Center()
+									author:SetText("Tempo: " .. data[4])
+									author:Dock(RIGHT)
+
+									function author:Paint(w, h)
+										surface.SetFont("Default")
+										local w = surface.GetTextSize(self:GetText())
+										self:SetSize(10 + w, 20)
+									end
+
+									function author:DoClick()
+										RunConsoleCommand("gs_tempo", data[4])
+									end
 								end
 								self:AddItem(button)
 								
@@ -1688,7 +1730,7 @@ Please note that if your pattern is short, reloading your weapon may take less t
 				local item = "url"
 				form.CTS[item] = vgui.Create("DTextEntry", form)
 				//form.CTS[item]:SetConVar("")
-				form.CTS[item]:SetValue("http://pastebin.com/download.php?i=6pwchMF3")
+				form.CTS[item]:SetValue("https://pastebin.com/raw/XWxj4yme")
 				form:AddItem( form.CTS[item] )
 				
 			end
