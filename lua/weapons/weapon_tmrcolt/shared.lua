@@ -154,7 +154,7 @@ function SWEP:Reload()
         self:SetSecondaryReloading(false)
         self:SetReloading(true)
         self.Owner:DoReloadEvent()
-		--self.Owner:AddGesture(ACT_HL2MP_GESTURE_RELOAD_DUEL, true)
+        --self.Owner:AddGesture(ACT_HL2MP_GESTURE_RELOAD_DUEL, true)
         if (self:Clip2() < 6) then
             self:SetSecondaryReloading(false)
             self:SetClip2(-1)
@@ -397,7 +397,7 @@ end
 function SWEP:notahack() -- todo done? maybe... edit: i guess so, but this is less hacky then what you have shouldve seen!
     local ft = FrameTime() * 8
 
-	if self:Clip1() == -1 then
+    if self:Clip1() == -1 then
         if lerpv_p < 1 then
             lerpv_p = lerpv_p + ft
         end
@@ -453,7 +453,7 @@ function SWEP:CalcViewModelView(vm, _, _, pos, ang)
     local viewmodel_right = self.Owner:GetViewModel(0)
     local l = 0
 
-	pos = pos + ang:Right() * 0.5 + ang:Up() * -1.5 + ang:Forward() * 0.3
+    pos = pos + ang:Right() * 0.5 + ang:Up() * -1.5 + ang:Forward() * 0.3
 
     if vm == viewmodel_left then
         l = lerpv_s
@@ -516,14 +516,18 @@ function SWEP:PostDrawViewModel(vm)
 
     if !vm2 then return end
 
-    if !IsValid(self.Hands2) then
+    if IsValid(self.Owner:GetHands()) and !IsValid(self.Hands2) then
         self.Hands2 = ClientsideModel(self.Owner:GetHands():GetModel())
         self.Hands2:SetNoDraw(true)
         self.Hands2.PlayerColor = self.Owner:GetPlayerColor()
         self.Hands2.GetPlayerColor = function(hands)
             return hands.PlayerColor
         end
+
+        return
     end
+
+    if !IsValid(self.Hands2) then return end
 
     self.Hands2:SetParent(self.Owner:GetViewModel(1))
     self.Hands2:AddEffects(EF_BONEMERGE)
